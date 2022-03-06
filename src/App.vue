@@ -1,28 +1,75 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Top class="top"></Top>
+    <div class="nav">
+      <el-row :gutter="10">
+        <el-col :span="5" :lg="3">
+          <NavMenu></NavMenu>
+        </el-col>
+        <el-col :span="6">
+          <div class="context">
+            <router-view></router-view>
+          </div>
+        </el-col>
+      </el-row>
+    </div>
+    <MusicPlayer class="down"></MusicPlayer>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Top from "@/components/pub/Top";
+import NavMenu from "@/components/pub/NavMenu";
+import MusicPlayer from "@/components/pub/MusicPlayer";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Top,
+    NavMenu,
+    MusicPlayer
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style lang="less">
+* {
+  margin: 0;
+  padding: 0;
 }
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+input {
+  background: none;
+  outline: none;
+  border: none;
+}
+
+input:focus {
+  border: none;
+}
+
+#app {
+  min-width: 900px;
+  width: 100%;
+  overflow: hidden;
+  .nav {
+
+    .context{
+      min-width: 600px;
+    }
+  }
+
+  .top {
+    z-index: 99;
+  }
+  .down{
+    z-index: 99;
+  }
+}
+
 </style>
