@@ -2,10 +2,9 @@
   <div class="main">
     <el-menu
         class="el-menu-vertical-demo"
-        default-active="1"
-    >
+        default-active="1">
       <el-menu-item index="1">
-        <router-link to="/discoverMusic">
+        <router-link to="/discoverMusic" slot="title">
           发现音乐
         </router-link>
       </el-menu-item>
@@ -61,13 +60,35 @@
           我的收藏
         </router-link>
       </el-menu-item>
+      <p>创建的歌单</p>
+      <el-menu-item v-for="list in playLists" :key="list.id">
+        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR">
+          {{ list.name }}
+        </router-link>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
 export default {
-  name: "NavMenu"
+  name: "NavMenu",
+  data() {
+    return {
+      playLists: [],
+    }
+  },
+  methods: {
+    routerR(){
+      this.$emit('routerRefresh')
+    }
+  },
+  mounted() {
+    this.$bus.$on('playList', data => {
+      console.log('这是传来的', data)
+      this.playLists = data
+    })
+  }
 }
 </script>
 
@@ -96,8 +117,11 @@ export default {
   a {
     display: block;
     width: 100%;
-    height: 80%;
+    height: 100%;
     letter-spacing: .2em;
+    overflow: hidden;     /*设置超出的部分进行影藏*/
+    text-overflow: ellipsis;     /*设置超出部分使用省略号*/
+    white-space:nowrap ;    /*设置为单行*/
   }
 
   p {

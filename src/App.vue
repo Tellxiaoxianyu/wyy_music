@@ -2,13 +2,13 @@
   <div id="app">
     <Top class="top"></Top>
     <div class="nav">
-      <el-row :gutter="10">
+      <el-row :gutter="15">
         <el-col :span="5" :lg="3">
-          <NavMenu></NavMenu>
+          <NavMenu class="menu" @routerRefresh="routerRefresh"></NavMenu>
         </el-col>
-        <el-col :span="6">
+        <el-col :span="10">
           <div class="context">
-            <router-view></router-view>
+            <router-view v-if="routerAlive"></router-view>
           </div>
         </el-col>
       </el-row>
@@ -24,10 +24,23 @@ import MusicPlayer from "@/components/pub/MusicPlayer";
 
 export default {
   name: 'App',
+  data(){
+    return{
+      routerAlive:true
+    }
+  },
   components: {
     Top,
     NavMenu,
     MusicPlayer
+  },
+  methods:{
+    routerRefresh(){
+      this.routerAlive = false;
+      this.$nextTick(()=>{
+        this.routerAlive = true;
+      });
+    }
   }
 }
 </script>
@@ -56,19 +69,29 @@ input:focus {
 #app {
   min-width: 900px;
   width: 100%;
-  overflow: hidden;
-  .nav {
 
-    .context{
-      min-width: 600px;
+  .nav {
+    min-width: 900px;
+    width: 100%;
+    overflow: hidden;
+    .menu{
+      height: calc(100vh - 100px);
+      overflow-y: scroll;
+    }
+    .context {
+      width: 100vw;
+      height: calc(100vh - 100px);
+      overflow-y: scroll;
     }
   }
 
   .top {
     z-index: 99;
   }
-  .down{
-    z-index: 99;
+
+  .down {
+    z-index: 98;
+    min-width: 800px;
   }
 }
 

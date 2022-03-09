@@ -1,20 +1,21 @@
 <template>
   <div class="main">
-    <el-row :gutter="20">
-      <el-col :span="4">
+    <audio :src="url" controls @canplay="getDuration" @timeupdate="updateTime" ref="audio"></audio>
+    <el-row :gutter="24">
+      <el-col :span="6" v-show="hasSong">
         <div class="main_left">
-          <img src="../../assets/images/tx.jpg" alt="">
+          <img :src="info.al.picUrl" alt="">
           <div class="info">
             <div class="singer">
-              <p>孤勇者</p>
+              <p>{{ info.name }}</p>
               <i class="iconfont icon-xihuan1"></i>
             </div>
-            <p>陈奕迅</p>
+            <p>{{ info.ar[0].name }}</p>
           </div>
         </div>
       </el-col>
-      <el-col :span="16">
-        <div class="music_player">
+      <el-col :span="12">
+        <div :class="['music_player',hasSong?'':'cent']">
           <div class="player_top">
             <i class="iconfont icon-icon-test"></i>
             <i class="iconfont icon-shangyishou"></i>
@@ -28,11 +29,11 @@
               <div class="last"></div>
               <div class="bot"></div>
             </div>
-            <span>00:00</span>
+            <span>{{ info.dt }}</span>
           </div>
         </div>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="6" v-show="hasSong">
         <div class="main_right">
           <div class="level">极高</div>
           <i class="iconfont icon-24gl-volumeZero"></i>
@@ -46,16 +47,65 @@
 
 <script>
 export default {
-  name: "MusicPlayer"
+  name: "MusicPlayer",
+  data() {
+    return {
+      duration:'',
+      currentTime:'',
+      //?判断是否有音乐在播放
+      hasSong: false,
+      url: "",
+      info: {
+        name: '',
+        al: {
+          picUrl: ''
+        },
+        ar: [{
+          name: ''
+        }],
+        dt: ''
+      }
+    }
+  },
+  methods: {
+    getDuration() {
+      console.log(this.$refs.audio.duration);
+      this.duration = this.$refs.audio.duration
+    },
+    updateTime(e) {
+      this.currentTime = e.target.currentTime
+    }
+  },
+  watch: {
+    currentSong() {  //监听正在播放的歌曲改变
+      this.$nextTick(() => {
+        this.$refs.audio.play();
+        console.log(this.$refs.audio.duration); //此时duration为NaN
+      })
+    },
+  },
+  mounted() {
+    this.$bus.$on('getSongUrl', (val) => {
+      console.log('控制器url', val);
+      this.url = val.url
+    })
+    this.$bus.$on('getSongInfo', (val) => {
+      console.log('控制器Info', val);
+      this.info = val
+      this.hasSong = true
+    })
+  }
 }
 </script>
 
 <style scoped lang="less">
 .main {
-  position: sticky;
+  position: fixed;
   bottom: 0;
+  left: 0;
   border-top: 1px solid #d9d9da;
   background: #fff;
+  width: 100%;
   height: 90px;
   padding-top: 10px;
 
@@ -97,6 +147,8 @@ export default {
 
   //?播放器
   .music_player {
+    margin: 0 auto;
+
     .player_top {
       display: flex;
       justify-content: center;
@@ -151,16 +203,24 @@ export default {
     }
   }
 
+  .cent {
+    width: 100vw;
+    user-select: none;
+    opacity: .5;
+  }
+
   //?其他
-  .main_right{
+  .main_right {
     display: flex;
     justify-content: space-around;
     justify-items: center;
     margin-top: 20px;
-    .iconfont{
+
+    .iconfont {
       font-size: 20px;
     }
-    .level{
+
+    .level {
       font-size: 12px;
       color: #ed5050;
       border: 1px solid #ed5050;

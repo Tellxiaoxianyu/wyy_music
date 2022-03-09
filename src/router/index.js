@@ -13,11 +13,12 @@ import RecentPlay from "@/components/content/myMusic/RecentPlay";
 import MyMusicCloud from "@/components/content/myMusic/MyMusicCloud";
 import MyBlog from "@/components/content/myMusic/MyBlog";
 import MyCollection from "@/components/content/myMusic/MyCollection";
+import MySong from "@/components/content/myMusic/MySong";
 
 Vue.use(VueRouter)
 
 const routes = [
-    {path: '/', component: DiscoverMusic},
+    {path: '/',redirect:'/discoverMusic', component: DiscoverMusic},
     //?发现音乐
     {path: '/discoverMusic', component: DiscoverMusic},
     //?博客
@@ -41,6 +42,8 @@ const routes = [
     {path: '/my/myBlog', component: MyBlog},
     //?我的收藏
     {path: '/my/myCollection', component: MyCollection},
+    //?创建的歌单
+    {path: '/my/mySong/:id', component: MySong},
 ]
 
 const router = new VueRouter({
