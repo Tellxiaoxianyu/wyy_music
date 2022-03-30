@@ -60,8 +60,14 @@
           我的收藏
         </router-link>
       </el-menu-item>
-      <p>创建的歌单</p>
-      <el-menu-item v-for="list in playLists" :key="list.id">
+      <p v-if="uid!=''">创建的歌单</p>
+      <el-menu-item v-for="(list,index) in createPlayList" :key="'id_'+index">
+        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR">
+          {{ list.name }}
+        </router-link>
+      </el-menu-item>
+      <p v-if="uid!=''">收藏的歌单</p>
+      <el-menu-item v-for="(list,index) in collectPlayList" :key="'id2_'+index">
         <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR">
           {{ list.name }}
         </router-link>
@@ -75,19 +81,45 @@ export default {
   name: "NavMenu",
   data() {
     return {
+      uid: '',
       playLists: [],
+      createPlayList: [],
+      collectPlayList: [],
     }
   },
   methods: {
-    routerR(){
+    routerR() {
       this.$emit('routerRefresh')
+    },
+  },
+  computed: {
+    getuid(){
+      return this.$store.state.uid
+    }
+  },
+  watch: {
+    getuid(){
+      this.uid = this.$store.state.uid
+      this.axios.get(`/user/playlist`, {
+        params: {
+          uid: this.uid
+        }
+      }).then(response => {
+        this.playLists = response.data.playlist
+        this.playLists.forEach(item => {
+          if (item.creator.userId == this.uid) {
+            this.createPlayList.push(item)
+          } else {
+            this.collectPlayList.push(item)
+          }
+        })
+      }).catch(err => {
+        console.error(err)
+      })
     }
   },
   mounted() {
-    this.$bus.$on('playList', data => {
-      console.log('这是传来的', data)
-      this.playLists = data
-    })
+    // this.slotPlayLists()
   }
 }
 </script>
@@ -119,9 +151,9 @@ export default {
     width: 100%;
     height: 100%;
     letter-spacing: .2em;
-    overflow: hidden;     /*设置超出的部分进行影藏*/
-    text-overflow: ellipsis;     /*设置超出部分使用省略号*/
-    white-space:nowrap ;    /*设置为单行*/
+    overflow: hidden; /*设置超出的部分进行影藏*/
+    text-overflow: ellipsis; /*设置超出部分使用省略号*/
+    white-space: nowrap; /*设置为单行*/
   }
 
   p {

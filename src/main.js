@@ -9,6 +9,7 @@ import axios from 'axios'
 import VueAxios from "vue-axios";
 import {basePath} from "@/http";
 import VueCookie from 'vue-cookie'
+import store from "@/store";
 
 Vue.use(VueAxios, axios)
 Vue.use(VueCookie)
@@ -23,6 +24,7 @@ new Vue({
     beforeCreate() {
         Vue.prototype.$bus = this
     },
+    store,
     router,
     render: h => h(App),
 }).$mount('#app')

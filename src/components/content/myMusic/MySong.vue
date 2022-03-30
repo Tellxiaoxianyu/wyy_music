@@ -18,7 +18,8 @@
             </div>
           </div>
           <div class="right_mid">
-            <el-button class="do_it" type="danger" icon="iconfont icon-xiayishou">
+            <el-button class="do_it" type="danger" icon="iconfont icon-xiayishou"
+            @click="playAll">
               播放全部
             </el-button>
           </div>
@@ -52,7 +53,7 @@
             </template>
           </el-table-column>
           <el-table-column
-              width="600"
+              width="400"
               prop="name"
               label="标题">
           </el-table-column>
@@ -128,7 +129,7 @@ export default {
           cookie: this.$cookie.get('MUSIC_U')
         }
       }).then(response => {
-        console.log(response);
+        console.log('getDetails',response);
         this.name = response.data.playlist.name;
         this.coverImgUrl = response.data.playlist.coverImgUrl
         this.creator.nickname = response.data.playlist.creator.nickname
@@ -139,12 +140,27 @@ export default {
 
         this.songData = response.data.playlist.tracks
         for (let i = 0; i < this.songData.length; i++) {
+          this.songData[i].durationTime = this.songData[i].dt
           this.songData[i].dt = moment(this.songData[i].dt).format('mm:ss')
         }
       }).catch(err => {
         console.log(err);
       })
     },
+    playAll(){
+      let songLists = []
+      this.songData.forEach(item=>{
+        songLists.push({
+          name:item.name,
+          singer:item.ar[0].name,
+          id:item.id,
+          al:item.al,
+          album:item.al.name,
+          time:item.dt
+        })
+      })
+      this.$bus.$emit("songLists", songLists)
+    }
   },
   mounted() {
     console.log(this.$route.params.id);

@@ -84,13 +84,17 @@ export default {
       username: '',
       //?登录表单
       form: {
-        number: '',
-        password: ''
+        number: '18318199503',
+        password: '141948253'
       },
       timer: ''
     }
   },
   methods: {
+    setUid(uid){
+      this.$bus.$emit('uid',uid)
+      this.$store.commit('getUid', {uid})
+    },
     //?二维码登录
     primgLogin() {
       this.dialogLoginVisible = true
@@ -166,6 +170,7 @@ export default {
         console.log(response)
         this.$cookie.set('MUSIC_U', response.data.cookie)
         this.uid = response.data.account.id
+        this.setUid(this.uid)
         if (response.data.code == 200) {
           this.$message({
             message: '登录成功',
@@ -190,6 +195,7 @@ export default {
       }).then(response => {
         console.log(response)
         this.uid = response.data.account.id
+        this.setUid(this.uid)
         if (response.data.code == 200) {
           this.$message({
             message: '登录成功',
@@ -214,6 +220,7 @@ export default {
         await this.loginByEmail(md5_password)
       }
       this.getUserSubCount()
+      this.$emit('isLogin')
     },
     //?获取用户信息 , 歌单，收藏，mv, dj 数量
     getUserSubCount() {
@@ -251,6 +258,7 @@ export default {
         }).then(response => {
           console.log(response)
           this.uid = response.data.account.id
+          this.setUid(this.uid)
           this.getUserDetail()
           this.getUserPlaylist()
         }).catch(err => {

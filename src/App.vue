@@ -26,7 +26,8 @@ export default {
   name: 'App',
   data(){
     return{
-      routerAlive:true
+      routerAlive:true,
+      islogin:false
     }
   },
   components: {
