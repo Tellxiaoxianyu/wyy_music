@@ -1,6 +1,22 @@
 <template>
   <el-container>
     <div class="song_container">
+      <el-backtop target=".song_container" :bottom="200">
+        <div
+            style="{
+                height: 100%;
+                width: 100%;
+                background-color: #ec4141;
+                box-shadow: 0 0 6px rgba(0,0,0, .12);
+                border-radius: 50%;
+                text-align: center;
+                line-height: 40px;
+                color: #ffffff;
+            }"
+        >
+          up
+        </div>
+      </el-backtop>
       <div class="top">
         <div class="top_left">
           <img :src="coverImgUrl" alt="">
@@ -53,7 +69,7 @@
             </template>
           </el-table-column>
           <el-table-column
-              width="400"
+              width="350"
               prop="name"
               label="标题">
           </el-table-column>
@@ -173,6 +189,8 @@ export default {
 .song_container {
   padding: 20px;
   width: 100%;
+  height: 100vh;
+  overflow-y: scroll;
 
   .top {
     display: flex;

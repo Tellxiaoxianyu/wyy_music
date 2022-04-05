@@ -62,13 +62,13 @@
       </el-menu-item>
       <p v-if="uid!=''">创建的歌单</p>
       <el-menu-item v-for="(list,index) in createPlayList" :key="'id_'+index">
-        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR">
+        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">
           {{ list.name }}
         </router-link>
       </el-menu-item>
       <p v-if="uid!=''">收藏的歌单</p>
       <el-menu-item v-for="(list,index) in collectPlayList" :key="'id2_'+index">
-        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR">
+        <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">
           {{ list.name }}
         </router-link>
       </el-menu-item>

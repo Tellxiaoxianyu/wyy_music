@@ -168,7 +168,7 @@ export default {
         timestamp: Date.parse(new Date())
       }).then(response => {
         console.log(response)
-        this.$cookie.set('MUSIC_U', response.data.cookie)
+        this.$cookie.set('MUSIC_U', response.data.cookie,7)
         this.uid = response.data.account.id
         this.setUid(this.uid)
         if (response.data.code == 200) {

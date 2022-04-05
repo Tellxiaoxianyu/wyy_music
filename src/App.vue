@@ -3,7 +3,7 @@
     <Top class="top"></Top>
     <div class="nav">
       <el-row :gutter="15">
-        <el-col :span="5" :lg="3">
+        <el-col :span="5" :lg="5">
           <NavMenu class="menu" @routerRefresh="routerRefresh"></NavMenu>
         </el-col>
         <el-col :span="10">
@@ -87,13 +87,30 @@ input:focus {
   }
 
   .top {
-    z-index: 99;
+    z-index: 98;
   }
 
   .down {
     z-index: 98;
     min-width: 800px;
   }
-}
 
+}
+.el-popover{
+  height: 100px;
+  min-width: 20px !important;
+  width: 20px !important;
+}
+.el-slider__runway{
+  margin-left: 7px !important;
+}
+.el-slider__bar{
+  background-color: #ec4141 !important;
+}
+.el-slider__button{
+   border:2px solid #ec4141 !important;
+ }
+.el-tooltip__popper{
+  margin-left: -10px;
+}
 </style>
