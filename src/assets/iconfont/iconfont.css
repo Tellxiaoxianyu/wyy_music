@@ -1,8 +1,8 @@
 @font-face {
     font-family: "iconfont"; /* Project id 2533303 */
-    src: url('//at.alicdn.com/t/font_2533303_vz567gshh2b.woff2?t=1646892971057') format('woff2'),
-    url('//at.alicdn.com/t/font_2533303_vz567gshh2b.woff?t=1646892971057') format('woff'),
-    url('//at.alicdn.com/t/font_2533303_vz567gshh2b.ttf?t=1646892971057') format('truetype');
+    src: url('//at.alicdn.com/t/font_2533303_apgl58tb2mb.woff2?t=1649245812179') format('woff2'),
+    url('//at.alicdn.com/t/font_2533303_apgl58tb2mb.woff?t=1649245812179') format('woff'),
+    url('//at.alicdn.com/t/font_2533303_apgl58tb2mb.ttf?t=1649245812179') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,26 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zuijinbofang:before {
+    content: "\e605";
+}
+
+.icon-shoucang:before {
+    content: "\e61a";
+}
+
+.icon-wodeboke:before {
+    content: "\e608";
+}
+
+.icon-xiazai:before {
+    content: "\e603";
+}
+
+.icon-yunpan:before {
+    content: "\e7de";
 }
 
 .icon-geci:before {

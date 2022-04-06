@@ -113,4 +113,8 @@ input:focus {
 .el-tooltip__popper{
   margin-left: -10px;
 }
+.current-row{
+  background-color: #fff !important;
+  color: #ec4141 !important;
+}
 </style>

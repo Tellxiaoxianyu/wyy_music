@@ -64,16 +64,20 @@
               :visible.sync="table"
               direction="rtl"
               :modal-append-to-body="false"
-              size="40%">
+              :modal="false"
+              size="30%">
             <div class="song_list">
               <div class="top" style="display: flex;justify-content: space-between">
                 <span style="color: #9f9f9f">总 {{ songLists.length }} 首</span>
-                <span style="color: #1b7cc4">清空列表</span>
+                <span style="color: #1b7cc4" @click="open">清空列表</span>
               </div>
-              <el-table class="list"
+              <el-table ref="songListTable"
+                        class="list"
                         :data="songLists"
-                        stripe
-                        style="width: 100%">
+                        style="width: 100%"
+                        @row-click="rowClick"
+                        highlight-current-row
+                        @current-change="handleCurrentChange">
                 <el-table-column
                     prop="name"
                     width="150">
@@ -123,7 +127,9 @@ export default {
         dt: ''
       },
       table: false,
+      dialogVisible: false,
       songLists: [],
+      currentRow: null,//当前选中
 
       audioWidth: 0,
       audioInterval: ''
@@ -220,6 +226,42 @@ export default {
       }
       this.getUrl(this.songLists[this.index].id)
       this.setInfo(this.songLists, this.index)
+      setTimeout(() => {
+        this.playMusic()
+      }, 500)
+    },
+    open(){
+      this.$confirm('此操作将清除播放列表, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.cleanList()
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      })
+    },
+    //? 清空列表
+    cleanList(){
+      this.index = 0
+      this.songLists = []
+      this.url = ""
+      this.hasSong = false
+      this.isPlaying = false
+    },
+    rowClick(row){
+      this.index = this.songLists.indexOf(row)
+      this.getUrl(this.songLists[this.index].id)
+      this.setInfo(this.songLists, this.index)
+      setTimeout(() => {
+        this.playMusic()
+      }, 500)
+    },
+    handleCurrentChange(val){
+      this.currentRow = val;
     },
     getUrl(id) {
         this.axios.get(`/song/url`, {
@@ -262,11 +304,16 @@ export default {
       let percentage = (this.currentTime / this.duration).toFixed(4) * 1;
       // 设置红色进度条长度
       this.audioWidth = lineWidth * percentage;
+    },
+    table(){
+      this.$nextTick(()=>{
+        this.$refs.songListTable.setCurrentRow(this.songLists[this.index])
+      })
     }
   },
   mounted() {
     this.$bus.$on('songLists', async (val) => {
-      console.log('songLists==>',JSON.parse(JSON.stringify(val)))
+      // console.log('songLists==>',JSON.parse(JSON.stringify(val)))
       this.songLists = JSON.parse(JSON.stringify(val))
       await this.getUrl(this.songLists[this.index].id)
       this.hasSong = true

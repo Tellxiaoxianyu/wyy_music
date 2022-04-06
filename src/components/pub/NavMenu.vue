@@ -37,38 +37,45 @@
       <p>我的音乐</p>
       <el-menu-item index="7">
         <router-link to="/my/localDownload">
+          <i class="iconfont icon-xiazai"></i>
           本地与下载
         </router-link>
       </el-menu-item>
       <el-menu-item index="8">
         <router-link to="/my/recentPlay">
+          <i class="iconfont icon-zuijinbofang"></i>
           最近播放
         </router-link>
       </el-menu-item>
       <el-menu-item index="9">
         <router-link to="/my/myMusicCloud">
+          <i class="iconfont icon-yunpan"></i>
           我的音乐云盘
         </router-link>
       </el-menu-item>
       <el-menu-item index="10">
         <router-link to="/my/myBlog">
+          <i class="iconfont icon-wodeboke"></i>
           我的博客
         </router-link>
       </el-menu-item>
       <el-menu-item index="11">
         <router-link to="/my/myCollection">
+          <i class="iconfont icon-shoucang"></i>
           我的收藏
         </router-link>
       </el-menu-item>
       <p v-if="uid!=''">创建的歌单</p>
       <el-menu-item v-for="(list,index) in createPlayList" :key="'id_'+index">
         <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">
+          <i :class="['iconfont',index==0?'icon-xihuan1':'icon-gedan']"></i>
           {{ list.name }}
         </router-link>
       </el-menu-item>
       <p v-if="uid!=''">收藏的歌单</p>
       <el-menu-item v-for="(list,index) in collectPlayList" :key="'id2_'+index">
         <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">
+          <i class="iconfont icon-gedan"></i>
           {{ list.name }}
         </router-link>
       </el-menu-item>
