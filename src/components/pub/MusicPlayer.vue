@@ -22,12 +22,12 @@
         <div :class="['music_player',hasSong?'':'cent']">
           <div class="player_top">
             <i class="iconfont icon-icon-test"></i>
-            <i class="iconfont icon-shangyishou"></i>
+            <i class="iconfont icon-shangyishou" @click="preSong"></i>
             <span @click="playOrPause">
               <i class="iconfont icon-zanting2 stop" v-if="isPlaying"></i>
               <i class="iconfont icon-zantingbofang stop" v-else></i>
             </span>
-            <i class="iconfont icon-xiayishou"></i>
+            <i class="iconfont icon-xiayishou" @click="nextSong"></i>
             <i class="iconfont icon-geci"></i>
           </div>
           <div class="player_bottom">
@@ -80,7 +80,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="singer"
-                    width="150">
+                    width="130">
                 </el-table-column>
                 <el-table-column
                     width="90"
@@ -143,6 +143,31 @@ export default {
       this.isPlaying = false
       this.$refs.audio.pause()
     },
+    preSong(){
+      this.index--
+      if (this.index < 0) {
+        this.index = 0
+        console.log('已经是第一首了',this.index)
+        return
+      }
+      this.getUrl(this.songLists[this.index].id)
+      this.setInfo(this.songLists, this.index)
+      setTimeout(() => {
+        this.playMusic()
+      }, 500)
+    },
+    nextSong(){
+      this.index++
+      if (this.index >= this.songLists.length) {
+        console.log('全部播放结束',this.index)
+        return
+      }
+      this.getUrl(this.songLists[this.index].id)
+      this.setInfo(this.songLists, this.index)
+      setTimeout(() => {
+        this.playMusic()
+      }, 500)
+    },
     getTimeupdate(e) {
       // 实时获取当前audio的currentTime
       this.currentTime = e.target.currentTime * 1000;
@@ -187,27 +212,25 @@ export default {
       let audio = this.$refs.audio
       audio.volume = val / 100
     },
-    getUrl(id) {
-      this.axios.get(`/song/url`, {
-        params: {
-          id
-        }
-      }).then(response => {
-        this.hasSong = true
-        this.isPlaying = true
-        this.url = response.data.data[0].url
-      }).catch(err => {
-        console.log(err);
-      })
-    },
     endAudio() {
       this.index++
       if (this.index >= this.songLists.length) {
-        console.log('重新开始')
+        console.log('全部播放结束')
         return
       }
       this.getUrl(this.songLists[this.index].id)
       this.setInfo(this.songLists, this.index)
+    },
+    getUrl(id) {
+        this.axios.get(`/song/url`, {
+          params: {
+            id
+          }
+        }).then(response => {
+          this.url = response.data.data[0].url
+        }).catch(err => {
+          console.log(err)
+        })
     },
     setInfo(array, index) {
       this.info = {
@@ -242,31 +265,17 @@ export default {
     }
   },
   mounted() {
-    this.$bus.$on('getSongUrl', (val) => {
-      // console.log('控制器url', val);
-      this.url = val.url
+    this.$bus.$on('songLists', async (val) => {
+      console.log('songLists==>',JSON.parse(JSON.stringify(val)))
+      this.songLists = JSON.parse(JSON.stringify(val))
+      await this.getUrl(this.songLists[this.index].id)
+      this.hasSong = true
+      this.isPlaying = true
       setTimeout(() => {
         this.playMusic()
         this.voice = this.$refs.audio.volume * 100
       }, 500)
-    })
-    this.$bus.$on('getSongInfo', (val) => {
-      console.log('控制器Info', val);
-      this.info = val
-      this.hasSong = true
-      this.isPlaying = true
-      this.songLists.push({
-        id: this.info.id,
-        name: this.info.name,
-        singer: this.info.ar[0].name,
-        time: this.info.dt,
-        picUrl: this.info.al.picUrl
-      })
-    })
-    this.$bus.$on('songLists', (val) => {
-      this.songLists = val
-      this.getUrl(val[0].id)
-      this.setInfo(val, 0)
+      this.setInfo(this.songLists, this.index)
     })
   }
 }
@@ -282,6 +291,9 @@ export default {
   width: 100%;
   height: 90px;
   padding-top: 10px;
+  i{
+    cursor: pointer;
+  }
 
   //?歌手信息
   .main_left {
@@ -410,7 +422,7 @@ export default {
     }
 
     .song_list {
-      padding: 30px;
+      padding: 25px;
     }
 
     .iconfont {

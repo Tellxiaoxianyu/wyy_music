@@ -35,7 +35,7 @@
           </div>
           <div class="right_mid">
             <el-button class="do_it" type="danger" icon="iconfont icon-xiayishou"
-            @click="playAll">
+                       @click="playAll">
               播放全部
             </el-button>
           </div>
@@ -109,52 +109,66 @@ export default {
       createTime: '',
       trackCount: 0,
       playCount: 0,
-      songData: [],
-      songInfo:{}
+      songData: [],//? 存储当前歌单所有歌曲
+      songLists: [],//? 用来保存需要播放的可取
+      songInfo: {}
     }
   },
   methods: {
     handleSelect(key) {
       console.log(key)
     },
-    handleLike(index, row){
+    handleLike(index, row) {
       console.log(index, row);
     },
-    rowDblclick(row){
-      //?歌曲详情
-      console.log(row);
-      this.getUrl(row.id)
-      this.$bus.$emit('getSongInfo',row)
+    //? 传输需要播放的音乐
+    sendSongLists() {
+      this.$bus.$emit("songLists", this.songLists)
     },
-    getUrl(id){
-      this.axios.get(`/song/url`,{
-        params:{
-          id
-        }
-      }).then(response => {
-        console.log(response.data.data[0]);
-        this.$bus.$emit('getSongUrl',response.data.data[0])
-      }).catch(err=>{
-        console.log(err);
+    async rowDblclick(row) {
+      //?歌曲详情
+      // console.log(row);
+      this.songLists.push({
+        name: row.name,
+        singer: row.ar[0].name,
+        id: row.id,
+        al: row.al,
+        album: row.al.name,
+        time: row.dt
+      })
+      this.sendSongLists()
+    },
+    getUrl(id) {
+      return new Promise((resolve, reject) => {
+        this.axios.get(`/song/url`, {
+          params: {
+            id
+          }
+        }).then(response => {
+          resolve(response.data.data[0])
+        }).catch(err => {
+          reject(err)
+        })
       })
     },
-    getDetails(){
+    getDetails() {
       this.axios.get(`/playlist/detail`, {
         params: {
           id: this.$route.params.id,
           cookie: this.$cookie.get('MUSIC_U')
         }
       }).then(response => {
-        console.log('getDetails',response);
-        this.name = response.data.playlist.name;
-        this.coverImgUrl = response.data.playlist.coverImgUrl
-        this.creator.nickname = response.data.playlist.creator.nickname
-        this.creator.avatarUrl = response.data.playlist.creator.avatarUrl
-        this.createTime = moment(response.data.playlist.createTime).format("YYYY-MM-DD")
-        this.trackCount = response.data.playlist.trackCount
-        this.playCount = response.data.playlist.playCount
+        console.log('getDetails', response.data);
+        let {playlist} = response.data
+        this.name = playlist.name;
+        this.coverImgUrl = playlist.coverImgUrl
+        this.creator.nickname = playlist.creator.nickname
+        this.creator.avatarUrl = playlist.creator.avatarUrl
+        this.createTime = moment(playlist.createTime).format("YYYY-MM-DD")
+        this.trackCount = playlist.trackCount
+        this.playCount = playlist.playCount
 
-        this.songData = response.data.playlist.tracks
+        this.songData = playlist.tracks
         for (let i = 0; i < this.songData.length; i++) {
           this.songData[i].durationTime = this.songData[i].dt
           this.songData[i].dt = moment(this.songData[i].dt).format('mm:ss')
@@ -163,19 +177,20 @@ export default {
         console.log(err);
       })
     },
-    playAll(){
-      let songLists = []
-      this.songData.forEach(item=>{
-        songLists.push({
-          name:item.name,
-          singer:item.ar[0].name,
-          id:item.id,
-          al:item.al,
-          album:item.al.name,
-          time:item.dt
+    playAll() {
+      //覆盖全部
+      this.songLists = []
+      this.songData.forEach(item => {
+        this.songLists.push({
+          name: item.name,
+          singer: item.ar[0].name,
+          id: item.id,
+          al: item.al,
+          album: item.al.name,
+          time: item.dt
         })
       })
-      this.$bus.$emit("songLists", songLists)
+      this.sendSongLists()
     }
   },
   mounted() {
@@ -276,7 +291,8 @@ export default {
 
   .content {
     width: 100%;
-    .like{
+
+    .like {
       color: #ec4141;
     }
   }
