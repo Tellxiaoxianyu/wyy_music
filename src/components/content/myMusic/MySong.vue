@@ -198,7 +198,7 @@ export default {
           id: this.$route.params.id,
           limit: this.pageSize,
           offset,
-          cookie: this.$cookie.get('MUSIC_U')
+          cookie: localStorage.getItem('MUSIC_U')
         }
       }).then(response => {
         // console.log(response.data.songs);
@@ -232,7 +232,7 @@ export default {
       this.axios.get(`/playlist/detail`, {
         params: {
           id: this.$route.params.id,
-          cookie: this.$cookie.get('MUSIC_U')
+          cookie: localStorage.getItem('MUSIC_U')
         }
       }).then(response => {
         console.log('getDetails', response.data);

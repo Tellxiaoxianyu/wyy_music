@@ -15,13 +15,18 @@
       <!--   个人信息 信息   -->
       <el-col :span="12">
         <div class="main_right">
-          <div class="tx_box" v-if="isLogin">
-            <img :src="txImg" alt="">
-            <span>{{ username }}</span>
-          </div>
-          <div class="tx_box" v-else @click="primgLogin">
-            <span>点击登录</span>
-          </div>
+
+          <transition
+              enter-active-class="animate__animated animate__bounceIn"
+              leave-active-class="animate__animated animate__fadeOutLeft">
+            <div class="tx_box" v-if="isLogin" :key="0">
+              <img :src="txImg" alt="">
+              <span>{{ username }}</span>
+            </div>
+            <div class="tx_box" v-else @click="primgLogin" :key="1">
+              <span>点击登录</span>
+            </div>
+          </transition>
           <div class="mail">
             <i class="iconfont icon-icon-mail"></i>
           </div>
@@ -91,8 +96,8 @@ export default {
     }
   },
   methods: {
-    setUid(uid){
-      this.$bus.$emit('uid',uid)
+    setUid(uid) {
+      this.$bus.$emit('uid', uid)
       this.$store.commit('getUid', {uid})
     },
     //?二维码登录
@@ -145,7 +150,7 @@ export default {
       clearInterval(this.timer)
     },
     //?获取用户信息
-    getUserDetail(){
+    getUserDetail() {
       this.axios.get(`/user/detail`, {
         params: {
           uid: this.uid
@@ -168,7 +173,10 @@ export default {
         timestamp: Date.parse(new Date())
       }).then(response => {
         console.log(response)
-        this.$cookie.set('MUSIC_U', response.data.cookie,7)
+
+        // 谷歌94版本以后不支持
+        // this.$cookies.set('MUSIC_U', response.data.cookie, 7)
+        localStorage.setItem('MUSIC_U', response.data.cookie)
         this.uid = response.data.account.id
         this.setUid(this.uid)
         if (response.data.code == 200) {
@@ -219,41 +227,37 @@ export default {
       } else {
         await this.loginByEmail(md5_password)
       }
-      this.getUserSubCount()
+      // this.getUserSubCount()
       this.$emit('isLogin')
     },
     //?获取用户信息 , 歌单，收藏，mv, dj 数量
     getUserSubCount() {
-      this.axios.get(`/user/subcount`,{
-        params:{
-          timestamp: Date.parse(new Date())
-        }
-      }).then(response => {
+      this.axios.get(`/user/subcount`).then(response => {
         console.log(response)
       }).catch(err => {
         console.error(err)
       })
     },
     //?获取用户歌单
-    getUserPlaylist(){
-      this.axios.get(`/user/playlist`,{
-        params:{
-          uid:this.uid
+    getUserPlaylist() {
+      this.axios.get(`/user/playlist`, {
+        params: {
+          uid: this.uid
         }
       }).then(response => {
         console.log(response)
-        this.$bus.$emit('playList',response.data.playlist)
+        this.$bus.$emit('playList', response.data.playlist)
       }).catch(err => {
         console.error(err)
       })
     },
     //?获取账号信息
-    getAccount(){
-      if (this.$cookie.get('MUSIC_U')){
+    getAccount() {
+      if (localStorage.getItem('MUSIC_U')) {
         this.$message('已登录')
-        this.axios.get(`/user/account`,{
-          params:{
-            cookie:this.$cookie.get('MUSIC_U')
+        this.axios.get(`/user/account`, {
+          params: {
+            cookie: localStorage.getItem('MUSIC_U')
           }
         }).then(response => {
           console.log(response)
@@ -264,7 +268,7 @@ export default {
         }).catch(err => {
           console.error(err)
         })
-      }else {
+      } else {
         this.$message.error('还未登录')
       }
     }
