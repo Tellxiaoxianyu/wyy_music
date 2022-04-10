@@ -7,14 +7,28 @@
 
     <el-row>
       <el-col :span="6" v-show="hasSong">
-        <div class="main_left">
-          <img :src="info.al.picUrl" alt="">
-          <div class="info">
-            <div class="singer">
-              <p>{{ info.name }}</p>
-              <i class="iconfont icon-xihuan1"></i>
+        <div class="left_box box_down" ref="left_box">
+          <div
+              class="main_left2">
+            <div class="back">
+              <i class="iconfont icon-shangjiantou" @click="backSong"></i>
             </div>
-            <p>{{ info.ar[0].name }}</p>
+          </div>
+          <div
+              class="main_left">
+            <div class="hover_box">
+              <img :src="info.al.picUrl" alt="">
+              <div class="hover_over" @click="toSongLyric">
+                <i class="iconfont icon-shangjiantou"></i>
+              </div>
+            </div>
+            <div class="info">
+              <div class="singer">
+                <p>{{ info.name }}</p>
+                <i class="iconfont icon-xihuan1"></i>
+              </div>
+              <p>{{ info.ar[0].name }}</p>
+            </div>
           </div>
         </div>
       </el-col>
@@ -110,6 +124,7 @@ export default {
       index: 0,
       duration: 0,
       currentTime: 0,
+      lyric: [],//歌词
       //?判断是否有音乐在播放
       hasSong: false,
       isPlaying: false,
@@ -132,7 +147,7 @@ export default {
       currentRow: null,//当前选中
 
       audioWidth: 0,
-      audioInterval: ''
+      audioInterval: '',
     }
   },
   methods: {
@@ -149,11 +164,11 @@ export default {
       this.isPlaying = false
       this.$refs.audio.pause()
     },
-    preSong(){
+    preSong() {
       this.index--
       if (this.index < 0) {
         this.index = 0
-        console.log('已经是第一首了',this.index)
+        console.log('已经是第一首了', this.index)
         return
       }
       this.getUrl(this.songLists[this.index].id)
@@ -162,10 +177,10 @@ export default {
         this.playMusic()
       }, 500)
     },
-    nextSong(){
+    nextSong() {
       this.index++
       if (this.index >= this.songLists.length) {
-        console.log('全部播放结束',this.index)
+        console.log('全部播放结束', this.index)
         return
       }
       this.getUrl(this.songLists[this.index].id)
@@ -214,7 +229,7 @@ export default {
         audio.currentTime = this.currentTime
       }
     },
-    changeVoice(val){
+    changeVoice(val) {
       let audio = this.$refs.audio
       audio.volume = val / 100
     },
@@ -230,7 +245,7 @@ export default {
         this.playMusic()
       }, 500)
     },
-    open(){
+    open() {
       this.$confirm('此操作将清除播放列表, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -245,14 +260,14 @@ export default {
       })
     },
     //? 清空列表
-    cleanList(){
+    cleanList() {
       this.index = 0
       this.songLists = []
       this.url = ""
       this.hasSong = false
       this.isPlaying = false
     },
-    rowClick(row){
+    rowClick(row) {
       this.index = this.songLists.indexOf(row)
       this.getUrl(this.songLists[this.index].id)
       this.setInfo(this.songLists, this.index)
@@ -260,19 +275,20 @@ export default {
         this.playMusic()
       }, 500)
     },
-    handleCurrentChange(val){
+    handleCurrentChange(val) {
       this.currentRow = val;
     },
     getUrl(id) {
-        this.axios.get(`/song/url`, {
-          params: {
-            id
-          }
-        }).then(response => {
-          this.url = response.data.data[0].url
-        }).catch(err => {
-          console.log(err)
-        })
+      this.axios.get(`/song/url`, {
+        params: {
+          id
+        }
+      }).then(response => {
+        console.log(response);
+        this.url = response.data.data[0].url
+      }).catch(err => {
+        console.log(err)
+      })
     },
     setInfo(array, index) {
       this.info = {
@@ -285,6 +301,107 @@ export default {
         }],
         dt: array[index].time
       }
+    },
+    //  ?获取歌词
+    getSongWords(id) {
+      /*
+        [00:00.000] 作曲 : 蔡德才
+        [00:07.590]越过生死一刻跟你电单车之中狭路再相逢
+        [00:15.210]大概你嘴边伤口与我发端都一般大紫大红
+        [00:22.900]下半生不要只要下秒钟
+        [00:27.000]再不敢吻你你便再失踪
+        [00:30.659]抑或有 谁高呼 不要动
+        [00:37.620]
+        [00:38.969]未怕挨紧颈边穿过横飞的子弹跟你去走难
+        [00:46.960]但怕结婚生子的平庸麻木地活着亦一样难
+        [00:55.069]若与不心爱的每夜晚餐
+        [00:58.490]也不知哪个故事更悲惨
+        [01:02.440]只愿我 能够与你过得今晚
+        [01:09.400]
+        [01:10.419]世界将我包围 誓死都一齐
+        [01:14.199]壮观得有如 悬崖的婚礼
+        [01:18.520]也许生于世上 无重要作为
+        [01:22.699]仍有这种真爱会留低
+        [01:26.060]我已不顾安危 誓死都一齐
+        [01:29.949]看不起这个繁华盛世
+        [01:34.359]纵使天主不忍心我们如垃圾般污秽
+        [01:40.960]抱着你不枉献世
+        [01:45.340]
+        [01:58.699]别理三餐一宿得到牧师的祝福需要那种运
+        [02:06.660]让我满足于飞车之中抱紧苦恋的做一类人
+        [02:14.450]面对这都市所有霓虹灯
+        [02:18.400]我敢说我爱到动魄惊心
+        [02:22.210]不负你 陪过我刹那的兴奋
+        [02:29.000]
+        [02:29.950]世界将我包围 誓死都一齐
+        [02:33.900]壮观得有如 悬崖的婚礼
+        [02:38.050]也许生于世上 无重要作为
+        [02:41.770]仍有这种真爱耀眼生辉
+        [02:46.760]我已不顾安危 誓死都一齐
+        [02:50.390]看不起这个繁华盛世
+        [02:54.950]纵使天主不忍心我们如垃圾般污秽
+        [03:01.450]抱着你不枉献世
+        [03:05.610]
+        [03:10.540]世界将我包围 誓死都一齐
+        [03:14.520]壮观得有如 悬崖的婚礼
+        [03:18.620]也许生于世上 无重要作为
+        [03:22.490]仍有生死之交可超越一切
+        [03:26.370]我已不顾安危 誓死都一齐
+        [03:30.290]爱得起你 为何还忌讳
+        [03:34.750]也许出生当天本以为谁待我像公仔
+        [03:41.220]最后却苦恋蚂蚁
+        [03:47.300]难自爱都懂得怎相爱找得到一个人共我分享这身世
+        [03:54.760]还未算失礼
+        [03:58.980]
+        */
+      this.axios.get(`/lyric`, {
+        params: {
+          id
+        }
+      }).then(response => {
+        // console.log(response.data.lrc.lyric);
+        //? 处理歌词
+        this.formatLyric(response.data.lrc.lyric)
+        console.log(this.lyric);
+      }).catch(err => {
+        console.log(err);
+      })
+    },
+    formatLyric(text) {
+      let arr = text.split("\n"); //原歌词文本已经换好行了方便很多，我们直接通过换行符“\n”进行切割
+      let row = arr.length; //获取歌词行数
+      for (let i = 0; i < row; i++) {
+        let temp_row = arr[i]; //现在每一行格式大概就是这样"[00:04.302][02:10.00]hello world";
+        let temp_arr = temp_row.split("]");//我们可以通过“]”对时间和文本进行分离
+        let text = temp_arr.pop(); //把歌词文本从数组中剔除出来，获取到歌词文本了！
+        //再对剩下的歌词时间进行处理
+        temp_arr.forEach(element => {
+          let obj = {};
+          let time_arr = element.substr(1, element.length - 1).split(":");//先把多余的“[”去掉，再分离出分、秒
+          let s = parseInt(time_arr[0]) * 60 + Math.ceil(time_arr[1]); //把时间转换成与currentTime相同的类型，方便待会实现滚动效果
+          obj.time = s;
+          obj.text = text;
+          this.lyric.push(obj); //每一行歌词对象存到组件的lyric歌词属性里
+        });
+      }
+      this.lyric.sort(this.sortRule); //由于不同时间的相同歌词我们给排到一起了，所以这里要以时间顺序重新排列一下
+      this.$store.commit("setLyric", this.lyric);
+      console.log(this.$store.state);
+    },
+    sortRule(a, b) { //设置一下排序规则
+      return a.time - b.time;
+    },
+    toSongLyric() {
+      this.$router.push("/my/lyric")
+      let box = this.$refs.left_box
+      box.removeAttribute('class')
+      box.setAttribute('class','left_box box_up')
+    },
+    backSong() {
+      this.$router.go(-1)
+      let box = this.$refs.left_box
+      box.removeAttribute('class')
+      box.setAttribute('class','left_box box_down')
     }
   },
   computed: {
@@ -305,8 +422,8 @@ export default {
       // 设置红色进度条长度
       this.audioWidth = lineWidth * percentage;
     },
-    table(){
-      this.$nextTick(()=>{
+    table() {
+      this.$nextTick(() => {
         this.$refs.songListTable.setCurrentRow(this.songLists[this.index])
       })
     }
@@ -316,6 +433,7 @@ export default {
       // console.log('songLists==>',JSON.parse(JSON.stringify(val)))
       this.songLists = JSON.parse(JSON.stringify(val))
       await this.getUrl(this.songLists[this.index].id)
+      this.getSongWords(this.songLists[this.index].id)
       this.hasSong = true
       this.isPlaying = true
       setTimeout(() => {
@@ -329,6 +447,12 @@ export default {
 </script>
 
 <style scoped lang="less">
+.box_up{
+  transform: translateY(0);
+}
+.box_down{
+  transform: translateY(-90px);
+}
 .main {
   position: fixed;
   bottom: 0;
@@ -338,45 +462,101 @@ export default {
   width: 100%;
   height: 90px;
   padding-top: 10px;
-  i{
+  overflow: hidden;
+
+  i {
     cursor: pointer;
   }
 
-  //?歌手信息
-  .main_left {
-    display: flex;
-    margin-left: 10px;
-
-    img {
-      width: 70px;
-      height: 70px;
-      border-radius: 10px;
-      margin-right: 10px;
-    }
-
-    .info {
+  .left_box{
+    transition: .5s;
+    width: 100%;
+    overflow: hidden;
+    //?歌手信息
+    .main_left {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      margin-left: 10px;
 
-      .singer {
-        width: 300px;
-        line-height: 20px;
-        display: flex;
+      .hover_box {
+        position: relative;
 
-        p {
-          font-size: 16px;
-          font-weight: bold;
-          margin-bottom: 7px;
+        img {
+          width: 70px;
+          height: 70px;
+          border-radius: 10px;
           margin-right: 10px;
-          overflow: hidden; /*设置超出的部分进行影藏*/
-          text-overflow: ellipsis; /*设置超出部分使用省略号*/
-          white-space: nowrap; /*设置为单行*/
+          border: 1px solid #9f9f9f;
+        }
+
+        .hover_over {
+          position: absolute;
+          top: 1px;
+          left: 1px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 70px;
+          height: 70px;
+          opacity: 0;
+          border-radius: 10px;
+
+          i {
+            font-size: 24px;
+          }
+        }
+
+        .hover_over:hover {
+          opacity: .5;
+          background: #fff;
+          cursor: pointer;
         }
       }
 
-      & > p:nth-child(2) {
-        font-size: 12px;
+      .info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        .singer {
+          width: 300px;
+          line-height: 20px;
+          display: flex;
+
+          p {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 7px;
+            margin-right: 10px;
+            overflow: hidden; /*设置超出的部分进行影藏*/
+            text-overflow: ellipsis; /*设置超出部分使用省略号*/
+            white-space: nowrap; /*设置为单行*/
+          }
+        }
+
+        & > p:nth-child(2) {
+          font-size: 12px;
+        }
+      }
+    }
+    .main_left2 {
+      display: flex;
+      margin-left: 10px;
+      margin-bottom: 30px;
+
+      .back {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 70px;
+        height: 70px;
+        border-radius: 10px;
+        margin-right: 10px;
+        border: 1px solid #000;
+
+        i {
+          font-size: 24px;
+          transform: rotate(180deg);
+        }
       }
     }
   }

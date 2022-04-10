@@ -2,11 +2,11 @@
   <div id="app">
     <Top class="top"></Top>
     <div class="nav">
-      <el-row :gutter="15">
-        <el-col :span="5" :lg="5">
+      <el-row>
+        <el-col :span="6" :lg="6">
           <NavMenu class="menu" @routerRefresh="routerRefresh"></NavMenu>
         </el-col>
-        <el-col :span="10">
+        <el-col :span="18">
           <div class="context">
             <router-view v-if="routerAlive"></router-view>
           </div>
@@ -66,7 +66,22 @@ input {
 input:focus {
   border: none;
 }
-
+::-webkit-scrollbar {/*滚动条整体样式*/
+  width: 6px;     /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+}
+::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+  border-radius: 10px;
+  background: #535353;
+}
+::-webkit-scrollbar-track {/*滚动条里面轨道*/
+  border-radius: 10px;
+  background: #EDEDED;
+}
+.confirm{
+  background: #ec4141 !important;
+  border: 1px solid #ec4141 !important;
+}
 #app {
   min-width: 900px;
   width: 100%;
@@ -74,15 +89,15 @@ input:focus {
   .nav {
     min-width: 900px;
     width: 100%;
-    overflow: hidden;
+    overflow-y: hidden;
     .menu{
-      height: calc(100vh - 100px);
+      height: calc(100vh - 160px);
       overflow-y: scroll;
     }
     .context {
-      width: 100vw;
-      height: calc(100vh - 100px);
-      overflow-y: scroll;
+      //width: 100vw;
+      height: calc(100vh - 160px);
+      //overflow-y: scroll;
     }
   }
 

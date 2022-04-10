@@ -10,9 +10,11 @@ import VueAxios from "vue-axios";
 import {basePath} from "@/http";
 import VueCookie from 'vue-cookie'
 import store from "@/store";
+import animate from 'animate.css'
 
 Vue.use(VueAxios, axios)
 Vue.use(VueCookie)
+Vue.use(animate)
 Vue.config.productionTip = false
 axios.defaults.baseURL = basePath
 

@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <div class="song_container">
+    <div class="song_container" ref="context">
       <el-backtop target=".song_container" :bottom="200">
         <div
             style="{
@@ -55,6 +55,7 @@
         <el-table
             :data="songData"
             @row-dblclick="rowDblclick"
+            :cell-style="cellStyle"
             stripe>
           <el-table-column
               type="index"
@@ -69,7 +70,7 @@
             </template>
           </el-table-column>
           <el-table-column
-              width="350"
+              width="300"
               prop="name"
               label="标题">
           </el-table-column>
@@ -79,7 +80,7 @@
               label="歌手">
           </el-table-column>
           <el-table-column
-              width="200"
+              width="250"
               prop="al[name]"
               label="专辑">
           </el-table-column>
@@ -110,8 +111,11 @@ export default {
       trackCount: 0,
       playCount: 0,
       songData: [],//? 存储当前歌单所有歌曲
+      currentPage: 0, //? 当前页
+      pageSize: 20,
+      totalPage: 0, //? 总页数
       songLists: [],//? 用来保存需要播放的可取
-      songInfo: {}
+      songInfo: {},
     }
   },
   methods: {
@@ -128,15 +132,29 @@ export default {
     async rowDblclick(row) {
       //?歌曲详情
       // console.log(row);
-      this.songLists.push({
-        name: row.name,
-        singer: row.ar[0].name,
-        id: row.id,
-        al: row.al,
-        album: row.al.name,
-        time: row.dt
-      })
-      this.sendSongLists()
+      if (row.success) {
+        this.songLists.push({
+          name: row.name,
+          singer: row.ar[0].name,
+          id: row.id,
+          al: row.al,
+          album: row.al.name,
+          time: row.dt
+        })
+        this.sendSongLists()
+      } else {
+        this.$alert('因版权方要求,该资源暂时无法播放,我们正在争取歌曲回归', '当前歌曲暂无音源', {
+          confirmButtonText: '知道了',
+          confirmButtonClass: 'confirm',
+          center: true,
+          callback: () => {
+            this.$message({
+              type: 'info',
+              message: `已取消`
+            });
+          }
+        });
+      }
     },
     getUrl(id) {
       return new Promise((resolve, reject) => {
@@ -149,6 +167,65 @@ export default {
         }).catch(err => {
           reject(err)
         })
+      })
+    },
+    // 判断歌曲是否有版权
+    checkSong(id) {
+      return new Promise((resolve) => {
+        this.axios.get(`/check/music`, {
+          params: {
+            id
+          }
+        }).then(response => {
+          resolve(response.data.success)
+        }).catch((err) => {
+          resolve(err.response.data.success)
+        })
+      })
+    },
+    cellStyle(row) {
+      if (row.column.label === '标题') {
+        if (!row.row.success) {
+          return 'color: #c3c3d3;'
+        }
+        return 'cursor:text;'
+      }
+    },
+    //?获取歌单全部歌曲
+    getAllPlaylist(offset) {
+      this.axios.get(`/playlist/track/all`, {
+        params: {
+          id: this.$route.params.id,
+          limit: this.pageSize,
+          offset,
+          cookie: this.$cookie.get('MUSIC_U')
+        }
+      }).then(response => {
+        // console.log(response.data.songs);
+        let newArr = [...this.songData, ...response.data.songs]
+        let hash = {}; //去重
+        let arr = newArr.reduce((preVal, curVal) => {
+          hash[curVal.id]		//id就是数组中的id字段
+              ? ""
+              : (hash[curVal.id] = true && preVal.push(curVal));
+          return preVal;
+        }, []);
+        // 获取新增
+        let newAddArr = []
+        for (let i = this.songData.length; i < arr.length; i++) {
+          newAddArr.push(arr[i])
+        }
+
+        this.songData = arr
+        for (let item of newAddArr) {
+          item.durationTime = item.dt
+          item.dt = moment(item.dt).format('mm:ss')
+          this.checkSong(item.id).then((res) => {
+            res ? this.$set(item, 'success', true) : this.$set(item, 'success', false)
+          })
+        }
+      }).catch(err => {
+        console.log(err);
       })
     },
     getDetails() {
@@ -168,11 +245,7 @@ export default {
         this.trackCount = playlist.trackCount
         this.playCount = playlist.playCount
 
-        this.songData = playlist.tracks
-        for (let i = 0; i < this.songData.length; i++) {
-          this.songData[i].durationTime = this.songData[i].dt
-          this.songData[i].dt = moment(this.songData[i].dt).format('mm:ss')
-        }
+        this.totalPage = playlist.tracks.length
       }).catch(err => {
         console.log(err);
       })
@@ -180,23 +253,49 @@ export default {
     playAll() {
       //覆盖全部
       this.songLists = []
-      this.songData.forEach(item => {
-        this.songLists.push({
-          name: item.name,
-          singer: item.ar[0].name,
-          id: item.id,
-          al: item.al,
-          album: item.al.name,
-          time: item.dt
-        })
-      })
+      for (let s of this.songData) {
+        if (s.success) {
+          this.songLists.push({
+            name: s.name,
+            singer: s.ar[0].name,
+            id: s.id,
+            al: s.al,
+            album: s.al.name,
+            time: s.dt
+          })
+        } else {
+          continue
+        }
+      }
       this.sendSongLists()
     }
   },
   mounted() {
     console.log(this.$route.params.id);
     this.getDetails()
-  }
+    console.log('现在是第', this.currentPage + 1)
+    this.getAllPlaylist(this.currentPage)
+    let dom = this.$refs.context
+    this.$nextTick(() => {
+      dom.addEventListener('scroll', () => {
+        //? 表格一格高度为48 一页15行高度为720
+        let pageHeight = 48 * this.pageSize
+        /**  scrollHeight 是一个元素能够展示其所有内容所需要的最小高度 总高度
+         *   clientHeight 是一个元素的 content + padding 的高度
+         *   scrollTop 元素的垂直滚动条位置 272开始为表格部分 进度条移动高度
+         *   0 21 41
+         * */
+        if (dom.scrollTop >= 270 + 200) { // 进入表格区域
+          if (dom.scrollTop - 270 - 200 >= pageHeight * this.currentPage) {
+            this.currentPage++
+            console.log('换页啦,现在是第', this.currentPage + 1)
+            this.getAllPlaylist(this.currentPage)
+          }
+        }
+      })
+    })
+  },
+
 }
 </script>
 
@@ -204,7 +303,7 @@ export default {
 .song_container {
   padding: 20px;
   width: 100%;
-  height: 100vh;
+  height: calc(100vh - 180px);
   overflow-y: scroll;
 
   .top {

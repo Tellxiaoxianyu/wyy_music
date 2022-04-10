@@ -14,6 +14,7 @@ import MyMusicCloud from "@/components/content/myMusic/MyMusicCloud";
 import MyBlog from "@/components/content/myMusic/MyBlog";
 import MyCollection from "@/components/content/myMusic/MyCollection";
 import MySong from "@/components/content/myMusic/MySong";
+import Lyric from "@/components/content/myMusic/Lyric";
 
 Vue.use(VueRouter)
 
@@ -42,6 +43,7 @@ const routes = [
     {path: '/my/myBlog', component: MyBlog},
     //?我的收藏
     {path: '/my/myCollection', component: MyCollection},
+    {path: '/my/lyric', component: Lyric},
     //?创建的歌单
     {path: '/my/mySong/:id', component: MySong},
 ]
