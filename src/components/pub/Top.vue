@@ -280,7 +280,8 @@ export default {
       this.axios.get(`/logout`).then(response => {
         if (response.data.code == 200){
           this.$message('退出成功')
-          this.$cookie.delete('MUSIC_U')
+          localStorage.removeItem('MUSIC_U')
+          // this.$cookie.delete('MUSIC_U')
           this.isLogin = false
           this.uid = ''
           this.setUid(this.uid)
