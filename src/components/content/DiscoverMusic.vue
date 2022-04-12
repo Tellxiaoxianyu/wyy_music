@@ -1,12 +1,39 @@
 <template>
   <div>
-    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal"  active-text-color="red">
-      <el-menu-item index="1" @click="changePage">个性推荐</el-menu-item>
-      <el-menu-item index="2" @click="changePage">专属定制</el-menu-item>
-      <el-menu-item index="3" @click="changePage">歌单</el-menu-item>
-      <el-menu-item index="4" @click="changePage">排行榜</el-menu-item>
-      <el-menu-item index="5" @click="changePage">歌手</el-menu-item>
-      <el-menu-item index="6" @click="changePage">最新音乐</el-menu-item>
+    <el-menu default-active="1"
+             class="el-menu-demo"
+             mode="horizontal"
+             active-text-color="red">
+      <el-menu-item index="1">
+        <router-link to="/discoverMusic">
+          个性推荐
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="2">
+        <router-link to="/discoverMusic/customization">
+          专属定制
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="3">
+        <router-link to="/discoverMusic/songList">
+          歌单
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="4">
+        <router-link to="/discoverMusic/rankingList">
+          排行榜
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="5">
+        <router-link to="/discoverMusic/singer">
+          歌手
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="6">
+        <router-link to="/discoverMusic/singer">
+          最新音乐
+        </router-link>
+      </el-menu-item>
     </el-menu>
     <router-view></router-view>
   </div>
@@ -15,23 +42,23 @@
 <script>
 export default {
   name: "DiscoverMusic",
-  data(){
+  data() {
     return {
-      activeIndex : '1',
+      activeIndex: '1',
     }
   },
-  methods:{
+  methods: {
     // 页面跳转
-    changePage(event){
-      switch(true){
+    changePage(event) {
+      switch (true) {
         case event.index == 1:
           this.activeIndex = "1";
           this.$router.push('/discoverMusic/recommend');
           break;
-        case event.index == 2:
+        case event.index == "2":
           this.$router.push('/discoverMusic/customization');
           break;
-        case event.index == 3:
+        case event.index == "3":
           this.$router.push('/discoverMusic/songList');
           break;
         case event.index == 4:
@@ -45,18 +72,18 @@ export default {
       }
     }
   },
-  watch:{
+  watch: {
     // 用于监听页面跳转
-    activeIndex:{
-      deep:true,
-      handler(){
+    activeIndex: {
+      deep: true,
+      handler() {
         //置空
       }
     }
   },
   mounted() {
     // 获取recommend组件的activeIndex值
-    this.$bus.$on('toList',(data)=>{
+    this.$bus.$on('toList', (data) => {
       this.activeIndex = data
     })
   }
@@ -64,9 +91,9 @@ export default {
 </script>
 
 <style scoped>
-  .el-menu-item.is-active{
-    font-size: 20px;
-    color: black !important;
-    font-weight: bold;
-  }
+.el-menu-item.is-active {
+  font-size: 20px;
+  color: black !important;
+  font-weight: bold;
+}
 </style>

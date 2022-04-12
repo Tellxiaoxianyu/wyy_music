@@ -4,7 +4,7 @@
         class="el-menu-vertical-demo"
         default-active="1">
       <el-menu-item index="1">
-        <router-link to="/discoverMusic/recommend" slot="title">
+        <router-link to="/discoverMusic" slot="title">
           发现音乐
         </router-link>
       </el-menu-item>
