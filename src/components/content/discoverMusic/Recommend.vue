@@ -1,16 +1,13 @@
 <template>
   <div>
-    <el-carousel :interval="4000" type="card" height="280px" style="width: 79%;">
+    <el-carousel :interval="4000" type="card" height="280px" style="width: 100%;">
         <el-carousel-item v-for="item in imgList" :key="item" style="border-radius: 5px; margin-top:5px" >
             <img style="width:100%;height:100%" :src="item" alt="">
         </el-carousel-item>
     </el-carousel>
 
-    <ul class="recommenu" @click="toSongList">推荐歌单></ul>
+    <ul class="recommenu">推荐歌单></ul>
 
-    <el-row>
-
-  </el-row>
   </div>
 </template>
 
@@ -19,16 +16,8 @@
         name: "Recommend",
         data(){
           return {
-            toList : '3',
-            Lists:[],
             imgList: [],
           }          
-        },
-        methods:{
-          toSongList(){
-            this.$bus.$emit('toList',this.toList)
-            this.$router.push('SongList');
-          }
         },
         mounted(){
           // 获取轮播图图片

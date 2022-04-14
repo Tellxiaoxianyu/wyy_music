@@ -110,7 +110,7 @@ export default {
   computed: {
     getuid(){
       return this.$store.state.uid
-    }
+    },
   },
   watch: {
     // 监听uid变化
@@ -125,13 +125,13 @@ export default {
     },
     getuid(){
       this.uid = this.$store.state.uid
-      console.log(this.uid)
+      // console.log(this.uid)
       this.axios.get(`/user/playlist`, {
         params: {
           uid: this.uid
         }
       }).then(response => {
-        console.log('@',response.data.playlist);
+        // console.log('@',response.data.playlist);
         this.playLists = response.data.playlist
         this.playLists.forEach(item => {
           if (item.creator.userId == this.uid) {
