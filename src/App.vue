@@ -57,6 +57,10 @@ a {
   color: #000;
 }
 
+ul{
+  list-style: none;
+}
+
 input {
   background: none;
   outline: none;
@@ -66,6 +70,23 @@ input {
 input:focus {
   border: none;
 }
+
+.el-loading-spinner .circular{
+  width: 42px;
+  height: 42px;
+  animation: loading-rotate 2s linear infinite;
+  display: none;
+}
+.el-loading-spinner{
+  background: url("assets/images/loading.gif") no-repeat;
+  background-size: 48px 48px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  top: 50%;
+  left: 50%;
+}
+
 ::-webkit-scrollbar {/*滚动条整体样式*/
   width: 6px;     /*高宽分别对应横竖滚动条的尺寸*/
   height: 1px;
