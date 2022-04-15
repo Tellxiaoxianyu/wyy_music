@@ -34,7 +34,8 @@
             </div>
           </div>
           <div class="right_mid">
-            <el-button class="do_it" type="danger" icon="iconfont icon-xiayishou"
+            <el-button class="do_it" type="danger"
+                       icon="iconfont icon-xiayishou"
                        @click="playAll">
               播放全部
             </el-button>
@@ -96,6 +97,7 @@
 
 <script>
 import moment from "moment";
+import {Loading} from 'element-ui';
 
 export default {
   name: "MySong",
@@ -111,11 +113,13 @@ export default {
       trackCount: 0,
       playCount: 0,
       songData: [],//? 存储当前歌单所有歌曲
+      songDataAll: [],//? 存储播放全部歌曲
       currentPage: 0, //? 当前页
       pageSize: 20,
       totalPage: 0, //? 总页数
       songLists: [],//? 用来保存需要播放的可取
       songInfo: {},
+      fullscreenLoading: false
     }
   },
   methods: {
@@ -246,28 +250,56 @@ export default {
         this.playCount = playlist.playCount
 
         this.totalPage = playlist.tracks.length
+        this.songDataAll = playlist.tracks
       }).catch(err => {
         console.log(err);
       })
     },
     playAll() {
-      //覆盖全部
-      this.songLists = []
-      for (let s of this.songData) {
-        if (s.success) {
-          this.songLists.push({
-            name: s.name,
-            singer: s.ar[0].name,
-            id: s.id,
-            al: s.al,
-            album: s.al.name,
-            time: s.dt
+      this.$confirm('此操作将会覆盖目前的播放列表', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let loadingInstance = Loading.service({
+          lock: true,
+          text: '',
+          spinner: ''
+        });
+        //覆盖全部
+        this.songLists = []
+        for (let item of this.songDataAll) {
+          item.durationTime = item.dt
+          item.dt = moment(item.dt).format('mm:ss')
+          await this.checkSong(item.id).then((res) => {
+            res ? this.$set(item, 'success', true) : this.$set(item, 'success', false)
           })
-        } else {
-          continue
         }
-      }
-      this.sendSongLists()
+        for (let s of this.songDataAll) {
+          if (s.success) {
+            this.songLists.push({
+              name: s.name,
+              singer: s.ar[0].name,
+              id: s.id,
+              al: s.al,
+              album: s.al.name,
+              time: s.dt
+            })
+          } else {
+            continue
+          }
+        }
+        this.sendSongLists()
+        this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+
     }
   },
   mounted() {
