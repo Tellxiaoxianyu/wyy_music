@@ -25,7 +25,7 @@
               <div class="lyric_box">
 <!--                <div class="coverTop"></div>-->
                 <div class="lyric_right" ref="lyric">
-                  <ul>
+                  <ul :style="{'padding-top': pt+'px','transition':'.5s'}">
                     <li :class="[item.time==currentTime?'currentLine':'']"
                         v-for="(item,index) in currentLyric"
                         :key="'id_'+index">
@@ -49,7 +49,8 @@ export default {
   props: ["info", "currentLyric", "time","isStart"],
   data() {
     return {
-      currentTime: 0
+      currentTime: 0,
+      pt:90
     }
   },
   computed: {
@@ -59,6 +60,7 @@ export default {
   },
   watch: {
     info() {
+      this.pt = 90
       console.log(this.info);
     },
     currentLyric() {
@@ -69,6 +71,7 @@ export default {
         if (this.timeToSecond == this.currentLyric[key].time) {
           this.currentTime = this.timeToSecond
           if (key>=5){
+            this.pt = 0
             this.$nextTick(()=>{
               this.$refs.lyric.scrollTop = 30 * (key - 5)
             })
