@@ -3,10 +3,10 @@
     <Top class="top"></Top>
     <div class="nav">
       <el-row>
-        <el-col :span="6" :lg="6">
+        <el-col :span="5" :lg="4">
           <NavMenu class="menu" @routerRefresh="routerRefresh"></NavMenu>
         </el-col>
-        <el-col :span="18">
+        <el-col :span="19" :lg="20">
           <div class="context">
             <router-view v-if="routerAlive"></router-view>
           </div>
@@ -85,6 +85,9 @@ input:focus {
   position: relative;
   top: 50%;
   left: 50%;
+}
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  min-height: 400px;
 }
 
 ::-webkit-scrollbar {/*滚动条整体样式*/
