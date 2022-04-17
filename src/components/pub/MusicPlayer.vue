@@ -183,6 +183,7 @@ export default {
       this.index--
       if (this.index < 0) {
         this.index = 0
+        this.$message('已经是第一首了噢~~~')
         console.log('已经是第一首了', this.index)
         return
       }
@@ -197,6 +198,8 @@ export default {
     nextSong() {
       this.index++
       if (this.index >= this.songLists.length) {
+        this.index  = this.songLists.length-1
+        this.$message('没有下一首了噢~~~')
         console.log('全部播放结束', this.index)
         return
       }
@@ -256,6 +259,7 @@ export default {
       this.index++
       if (this.index >= this.songLists.length) {
         console.log('全部播放结束')
+        this.isPlaying = false
         return
       }
       this.getUrl(this.songLists[this.index].id)
@@ -401,21 +405,28 @@ export default {
       this.$nextTick(() => {
         this.$refs.songListTable.setCurrentRow(this.songLists[this.index])
       })
+    },
+    songLists(){
+      if (this.songLists.length==1) {
+        this.getUrl(this.songLists[this.index].id)
+        this.getSongWords(this.songLists[this.index].id)
+        this.hasSong = true
+        this.isPlaying = true
+        setTimeout(() => {
+          this.playMusic()
+          this.voice = this.$refs.audio.volume * 100
+        }, 500)
+        this.setInfo(this.songLists, this.index)
+      }else {
+        console.log('下一首')
+        this.nextSong()
+      }
     }
   },
   mounted() {
-    this.$bus.$on('songLists', async (val) => {
+    this.$bus.$on('songLists', (val) => {
       // console.log('songLists==>',JSON.parse(JSON.stringify(val)))
       this.songLists = JSON.parse(JSON.stringify(val))
-      await this.getUrl(this.songLists[this.index].id)
-      this.getSongWords(this.songLists[this.index].id)
-      this.hasSong = true
-      this.isPlaying = true
-      setTimeout(() => {
-        this.playMusic()
-        this.voice = this.$refs.audio.volume * 100
-      }, 500)
-      this.setInfo(this.songLists, this.index)
     })
   }
 }

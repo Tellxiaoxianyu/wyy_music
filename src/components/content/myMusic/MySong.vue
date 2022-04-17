@@ -137,15 +137,26 @@ export default {
       //?歌曲详情
       // console.log(row);
       if (row.success) {
-        this.songLists.push({
+        if(JSON.stringify(this.songLists).indexOf(JSON.stringify({
           name: row.name,
           singer: row.ar[0].name,
           id: row.id,
           al: row.al,
           album: row.al.name,
           time: row.dt
-        })
-        this.sendSongLists()
+        }))==-1){
+          this.songLists.push({
+            name: row.name,
+            singer: row.ar[0].name,
+            id: row.id,
+            al: row.al,
+            album: row.al.name,
+            time: row.dt
+          })
+          this.sendSongLists()
+        }else {
+          this.$message({message: '已经在播放列表了喔~', type: 'warning'})
+        }
       } else {
         this.$alert('因版权方要求,该资源暂时无法播放,我们正在争取歌曲回归', '当前歌曲暂无音源', {
           confirmButtonText: '知道了',
