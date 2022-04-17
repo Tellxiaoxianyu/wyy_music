@@ -7,11 +7,6 @@
 <script>
 export default {
     name:"SongList",
-    data(){
-    return {
-      activeIndex : '3',
-    }
-  },
 }
 </script>
 

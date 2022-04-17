@@ -21,7 +21,6 @@
 import Top from "@/components/pub/Top";
 import NavMenu from "@/components/pub/NavMenu";
 import MusicPlayer from "@/components/pub/MusicPlayer";
-
 export default {
   name: 'App',
   data(){
@@ -51,26 +50,21 @@ export default {
   margin: 0;
   padding: 0;
 }
-
 a {
   text-decoration: none;
   color: #000;
 }
-
 ul{
   list-style: none;
 }
-
 input {
   background: none;
   outline: none;
   border: none;
 }
-
 input:focus {
   border: none;
 }
-
 .el-loading-spinner .circular{
   width: 42px;
   height: 42px;
@@ -89,7 +83,6 @@ input:focus {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   min-height: 400px;
 }
-
 ::-webkit-scrollbar {/*滚动条整体样式*/
   width: 6px;     /*高宽分别对应横竖滚动条的尺寸*/
   height: 1px;
@@ -109,7 +102,6 @@ input:focus {
 #app {
   min-width: 900px;
   width: 100%;
-
   .nav {
     min-width: 900px;
     width: 100%;
@@ -124,16 +116,13 @@ input:focus {
       //overflow-y: scroll;
     }
   }
-
   .top {
     z-index: 98;
   }
-
   .down {
     z-index: 98;
     min-width: 800px;
   }
-
 }
 .el-popover{
   height: 100px;

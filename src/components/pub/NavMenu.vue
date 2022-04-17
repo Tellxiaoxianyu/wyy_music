@@ -189,7 +189,6 @@ export default {
 .main {
   min-width: 180px;
   min-height: 550px;
-
   .router-link-active {
     height: 30px;
     line-height: 35px;
@@ -198,15 +197,12 @@ export default {
     font-weight: bold;
     padding: 5px 7px;
   }
-
   li {
     height: 40px;
   }
-
   li:hover {
     background: #f6f6f7;
   }
-
   a {
     display: block;
     width: 100%;
@@ -216,12 +212,10 @@ export default {
     text-overflow: ellipsis; /*设置超出部分使用省略号*/
     white-space: nowrap; /*设置为单行*/
   }
-
   p {
     color: #9f9f9f;
     font-size: 13px;
     margin: 10px 15px;
   }
 }
-
 </style>

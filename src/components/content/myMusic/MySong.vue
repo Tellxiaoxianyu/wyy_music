@@ -98,7 +98,6 @@
 <script>
 import moment from "moment";
 import {Loading} from 'element-ui';
-
 export default {
   name: "MySong",
   data() {
@@ -230,7 +229,6 @@ export default {
         for (let i = this.songData.length; i < arr.length; i++) {
           newAddArr.push(arr[i])
         }
-
         this.songData = arr
         for (let item of newAddArr) {
           item.durationTime = item.dt
@@ -259,7 +257,6 @@ export default {
         this.createTime = moment(playlist.createTime).format("YYYY-MM-DD")
         this.trackCount = playlist.trackCount
         this.playCount = playlist.playCount
-
         this.totalPage = playlist.tracks.length
         this.songDataAll = playlist.tracks
       }).catch(err => {
@@ -310,7 +307,6 @@ export default {
           message: '已取消'
         });
       });
-
     }
   },
   mounted() {
@@ -338,7 +334,6 @@ export default {
       })
     })
   },
-
 }
 </script>
 
@@ -348,31 +343,24 @@ export default {
   width: 100%;
   height: calc(100vh - 180px);
   overflow-y: scroll;
-
   .top {
     display: flex;
-
     .top_left {
       margin-right: 15px;
-
       img {
         width: 190px;
         height: 190px;
         border-radius: 10px;
       }
     }
-
     .top_right {
       display: flex;
       flex-direction: column;
-
       .right_top {
         margin-bottom: 10px;
-
         .up {
           display: flex;
           margin-bottom: 10px;
-
           span {
             width: 40px;
             height: 20px;
@@ -385,55 +373,45 @@ export default {
             margin-top: 6px;
           }
         }
-
         .down {
           display: flex;
           height: 30px;
           line-height: 25px;
-
           img {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             margin-right: 10px;
           }
-
           .name {
             color: #767db6;
             margin-right: 10px;
           }
-
           .time {
             font-size: 13px;
           }
         }
       }
     }
-
     .right_mid {
       .do_it {
         border-radius: 20px;
         background: #ec4141;
       }
     }
-
     .right_down {
       display: flex;
       margin-top: 10px;
-
       p {
         font-size: 13px;
       }
-
       & > p:nth-child(1) {
         margin-right: 10px;
       }
     }
   }
-
   .content {
     width: 100%;
-
     .like {
       color: #ec4141;
     }

@@ -64,7 +64,6 @@ export default {
       console.log(this.info);
     },
     currentLyric() {
-
     },
     timeToSecond() {
       for (let key in this.currentLyric) {
@@ -87,21 +86,17 @@ export default {
 .lyric_main {
   min-width: 900px;
   z-index: 90;
-
   .lyric_top {
     text-align: center;
     margin-top: 20px;
     letter-spacing: .2rem;
-
     h2 {
       margin-bottom: 10px;
     }
   }
-
   .lyric_down {
     .lyric-left {
       /*摇杆*/
-
       .needle {
         position: relative;
         z-index: 99;
@@ -113,25 +108,20 @@ export default {
         transform: rotate(-20deg);
         transition: transform 1s;
       }
-
       .needleRotate {
         transform: rotate(0deg);
       }
-
       /*磁盘*/
-
       .discContainer {
         position: relative;
         top: -80px;
         left: 0;
         width: 328px;
         height: 328px;
-
         .disc {
           width: 328px;
           height: 328px;
         }
-
         .musicImg {
           position: absolute;
           top: 0;
@@ -144,7 +134,6 @@ export default {
           border-radius: 50%;
         }
       }
-
       .dicAnimation {
         animation: disc 6s linear infinite;
         animation-delay: 1s;
@@ -153,7 +142,6 @@ export default {
         animation-play-state: paused;
       }
     }
-
     @keyframes disc {
       from {
         transform: rotate(0deg);
@@ -162,29 +150,24 @@ export default {
         transform: rotate(360deg);
       }
     }
-
     .lyric_box {
       position: relative;
       width: 600px;
       height: 300px;
-
       .coverTop, .coverBottom {
         position: absolute;
         width: 100%;
         height: 20px;
         background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(232, 233, 232, .7), rgba(255, 255, 255, 0));
       }
-
       .coverTop {
         top: 0;
         left: 0;
       }
-
       .coverBottom {
         bottom: 0;
         left: 0;
       }
-
       .lyric_right {
         transform: scale(1);
         transition: 1s;
@@ -197,16 +180,13 @@ export default {
         text-align: center;
         font-size: 16px;
         color: #737373;
-
         &:hover {
           overflow-y: scroll;
         }
-
         li {
           transition: .5s;
           margin-bottom: 10px;
         }
-
         .currentLine {
           font-size: 20px;
           color: #000;

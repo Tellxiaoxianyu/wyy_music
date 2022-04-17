@@ -90,10 +90,10 @@ export default {
       username: '',
       //?登录表单
       form: {
-        number: '18318199503',
-        password: '141948253'
-        // number: '13434299732',
-        // password: '147359862'
+        // number: '18318199503',
+        // password: '141948253'
+        number: '13434299732',
+        password: '147359862'
       },
       timer: ''
     }
@@ -263,7 +263,7 @@ export default {
             cookie: localStorage.getItem('MUSIC_U')
           }
         }).then(response => {
-          console.log(response)
+          // console.log(response)
           this.uid = response.data.account.id
           this.setUid(this.uid)
           this.getUserDetail()
