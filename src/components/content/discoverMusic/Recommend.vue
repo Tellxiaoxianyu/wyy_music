@@ -111,6 +111,9 @@
 </script>
 
 <style>
+.el-carousel__indicator--horizontal.is-active .el-carousel__button{
+  background: var(--active-color) !important;
+}
   .recommenu{
     font-size: 20px;
     font-weight: bold;

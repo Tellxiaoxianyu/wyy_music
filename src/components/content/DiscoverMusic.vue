@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="discover_container">
     <el-container>
       <el-header>
         <el-menu default-active="1"
@@ -50,9 +50,18 @@ export default {
 </script>
 
 <style scoped>
+.is-active{
+  color: var(--active-color) !important;
+  border-bottom: 2px solid var(--active-color) !important;
+}
 .el-menu-item.is-active {
   font-size: 20px;
   color: black !important;
   font-weight: bold;
+}
+.discover_container{
+  overflow-y: scroll;
+  width: 100%;
+  height: calc(100vh - 180px);
 }
 </style>

@@ -8,6 +8,7 @@ const store = new Vuex.Store({
     state: {
         uid: 0,//歌单id
         lyric:[],//歌词
+        theme_color:'#fff',//全局颜色
     },
     mutations,
 })

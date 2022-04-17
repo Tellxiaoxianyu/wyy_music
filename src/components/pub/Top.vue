@@ -15,22 +15,31 @@
       <!--   个人信息 信息   -->
       <el-col :span="12">
         <div class="main_right">
-          
           <transition
               enter-active-class="animate__animated animate__bounceIn"
               leave-active-class="animate__animated animate__fadeOutLeft">
             <div class="tx_box" v-if="isLogin" :key="0">
-            <img :src="txImg" alt="">
-            <span>{{ username }}</span>
-            <span @click="Logout">退出登录</span>
-          </div>
-           <div class="tx_box" v-else @click="primgLogin" :key="1">
-            <span>点击登录</span>
-          </div>
+              <img :src="txImg" alt="">
+              <span>{{ username }}</span>
+              <span @click="Logout">退出登录</span>
+            </div>
+            <div class="tx_box" v-else @click="primgLogin" :key="1">
+              <span>点击登录</span>
+            </div>
           </transition>
-          <div class="mail">
-            <i class="iconfont icon-icon-mail"></i>
-          </div>
+          <i class="iconfont icon-pifu" slot="reference" @click="showColorChange=!showColorChange"></i>
+          <transition
+              enter-active-class="animate__animated animate__bounceIn"
+              leave-active-class="animate__animated animate__bounceOut">
+            <div class="pifu" v-if="showColorChange">
+              <div class="pf_check_box">
+                <div class="item"
+                     :style="{'background':item,'border':'1px solid'+item}"
+                     v-for="(item,index) in colors"
+                     :key="'color_'+index" @click="changeColor(item)"></div>
+              </div>
+            </div>
+          </transition>
         </div>
       </el-col>
     </el-row>
@@ -58,7 +67,8 @@
         <img src="../../assets/images/loginBac.png" alt="">
         <el-form :model="form">
           <el-input class="login_form_input" placeholder="请输入手机号/邮箱" v-model="form.number"></el-input>
-          <el-input type="password" class="login_form_input" placeholder="密码" v-model="form.password"  @keydown.enter.native="login"></el-input>
+          <el-input type="password" class="login_form_input" placeholder="密码" v-model="form.password"
+                    @keydown.enter.native="login"></el-input>
           <el-button class="login" @click="login">登录</el-button>
         </el-form>
       </div>
@@ -95,10 +105,18 @@ export default {
         number: '13434299732',
         password: '147359862'
       },
-      timer: ''
+      timer: '',
+      color:'',
+      colors: ['#fff', '#ff5c8a', '#ff7a9e', '#717ff9', '#4791eb', '#39afea',
+        '#2bb669', '#6acc19', '#e2ab12', '#ff8f57', '#fd726d', '#fd544e'
+      ],
+      showColorChange:false
     }
   },
   methods: {
+    changeColor(color){
+      this.color = color;
+    },
     setUid(uid) {
       this.$bus.$emit('uid', uid)
       this.$store.commit('getUid', {uid})
@@ -176,7 +194,7 @@ export default {
         timestamp: Date.parse(new Date())
       }).then(response => {
         console.log(response)
-        
+
         // 谷歌94版本以后不支持
         // this.$cookies.set('MUSIC_U', response.data.cookie, 7)
         localStorage.setItem('MUSIC_U', response.data.cookie)
@@ -276,9 +294,9 @@ export default {
       }
     },
     // 退出登录
-    Logout(){
+    Logout() {
       this.axios.get(`/logout`).then(response => {
-        if (response.data.code == 200){
+        if (response.data.code == 200) {
           this.$message('退出成功')
           localStorage.removeItem('MUSIC_U')
           // this.$cookie.delete('MUSIC_U')
@@ -293,6 +311,11 @@ export default {
       })
     }
   },
+  watch:{
+    color(){
+      this.$store.commit('setColor',this.color)
+    }
+  },
   mounted() {
     this.getAccount()
   }
@@ -302,7 +325,7 @@ export default {
 <style scoped lang="less">
 .top {
   padding: 10px;
-  background: #f5f5f5;
+  background: var(--theme-color);
   height: 40px;
   position: sticky;
   top: 0;
@@ -339,6 +362,7 @@ export default {
     display: flex;
     float: right;
     line-height: 40px;
+    position: relative;
 
     .tx_box {
       display: flex;
@@ -352,6 +376,35 @@ export default {
 
       span {
         margin: 0 10px 0 0;
+      }
+    }
+
+    .pifu {
+      position: absolute;
+      right: -5px;
+      top: 50px;
+      padding: 20px;
+      width: 325px;
+      height: 100px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+
+      .pf_check_box {
+        display: flex;
+        flex-wrap: wrap;
+
+        .item {
+          width: 50px;
+          height: 50px;
+          border-radius: 15px;
+          margin: 0 2px 4px 0;
+          cursor: pointer;
+
+          &:nth-child(1) {
+            border: 1px solid #ccc !important;
+          }
+        }
       }
     }
   }

@@ -1,7 +1,8 @@
 @font-face {
-    font-family: 'iconfont';
-    /* Project id 2533303 */
-    src: url('//at.alicdn.com/t/font_2533303_b9ulfn41iv.woff2?t=1650034789112') format('woff2'), url('//at.alicdn.com/t/font_2533303_b9ulfn41iv.woff?t=1650034789112') format('woff'), url('//at.alicdn.com/t/font_2533303_b9ulfn41iv.ttf?t=1650034789112') format('truetype');
+    font-family: "iconfont"; /* Project id 2533303 */
+    src: url('//at.alicdn.com/t/font_2533303_ao3jqxlif7v.woff2?t=1650186300154') format('woff2'),
+    url('//at.alicdn.com/t/font_2533303_ao3jqxlif7v.woff?t=1650186300154') format('woff'),
+    url('//at.alicdn.com/t/font_2533303_ao3jqxlif7v.ttf?t=1650186300154') format('truetype');
 }
 
 .iconfont {
@@ -10,6 +11,14 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-pifu:before {
+    content: "\e647";
+}
+
+.icon-zanting:before {
+    content: "\e61f";
 }
 
 .icon-shangjiantou:before {
@@ -178,8 +187,4 @@
 
 .icon-tuijian:before {
     content: "\e629";
-}
-
-.icon-zanting:before {
-    content: "\e61f";
 }

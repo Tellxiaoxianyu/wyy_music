@@ -6,7 +6,7 @@
             style="{
                 height: 100%;
                 width: 100%;
-                background-color: #ec4141;
+                background-color: var(--active-color);
                 box-shadow: 0 0 6px rgba(0,0,0, .12);
                 border-radius: 50%;
                 text-align: center;
@@ -47,7 +47,8 @@
         </div>
       </div>
       <div class="content">
-        <el-menu default-active="1" active-text-color="#ec4141" class="el-menu-demo" mode="horizontal"
+        <el-menu default-active="1"
+                 class="el-menu-demo" mode="horizontal"
                  @select="handleSelect">
           <el-menu-item index="1">歌曲列表</el-menu-item>
           <el-menu-item index="2">评论</el-menu-item>
@@ -118,7 +119,7 @@ export default {
       totalPage: 0, //? 总页数
       songLists: [],//? 用来保存需要播放的可取
       songInfo: {},
-      fullscreenLoading: false
+      fullscreenLoading: false,
     }
   },
   methods: {
@@ -338,6 +339,10 @@ export default {
 </script>
 
 <style scoped lang="less">
+.is-active{
+  color: var(--active-color) !important;
+  border-bottom: 2px solid var(--active-color) !important;
+}
 .song_container {
   padding: 20px;
   width: 100%;
@@ -367,8 +372,8 @@ export default {
             text-align: center;
             border-radius: 5px;
             font-size: 13px;
-            color: #ec4141;
-            border: 1px solid #ec4141;
+            color: var(--active-color);
+            border: 1px solid var(--active-color);
             margin-right: 10px;
             margin-top: 6px;
           }
@@ -396,7 +401,8 @@ export default {
     .right_mid {
       .do_it {
         border-radius: 20px;
-        background: #ec4141;
+        background: var(--active-color);
+        border: 1px solid var(--active-color);
       }
     }
     .right_down {
@@ -413,7 +419,7 @@ export default {
   .content {
     width: 100%;
     .like {
-      color: #ec4141;
+      color: var(--active-color);
     }
   }
 }

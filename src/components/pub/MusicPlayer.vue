@@ -9,7 +9,7 @@
         leave-active-class="animate__animated animate__slideOutRight">
       <Lyric class="lyric" v-show="showLyric"
              :info="toLyricInfo"
-             :currentLyric="lyric"
+             :currentLyric="showLyric?lyric:[]"
              :time="currentTime"
              :isStart="isPlaying"></Lyric>
     </transition>
@@ -572,13 +572,13 @@ export default {
         display: flex;
         .last {
           height: 3px;
-          background: #ec4141;
+          background: var(--active-color);
         }
         .bot {
           width: 10px;
           height: 10px;
           border-radius: 50%;
-          background: #ec4141;
+          background: var(--active-color);
           margin-top: -3px;
           margin-left: -10px;
         }
@@ -610,7 +610,7 @@ export default {
       .last_voice {
         height: 3px;
         width: 100px;
-        background: #ec4141;
+        background: var(--active-color);
       }
     }
     .song_list {
@@ -621,8 +621,8 @@ export default {
     }
     .level {
       font-size: 12px;
-      color: #ed5050;
-      border: 1px solid #ed5050;
+      color: var(--active-color);
+      border: 1px solid var(--active-color);
       padding: 1px 3px;
     }
   }
