@@ -125,7 +125,6 @@
 <script>
 import moment from "moment";
 import Lyric from "@/components/content/myMusic/Lyric";
-
 export default {
   name: "MusicPlayer",
   components: {
@@ -160,7 +159,6 @@ export default {
       dialogVisible: false,
       songLists: [],
       currentRow: null,//当前选中
-
       audioWidth: 0,
       audioInterval: '',
     }
@@ -183,6 +181,7 @@ export default {
       this.index--
       if (this.index < 0) {
         this.index = 0
+        this.$message('已经是第一首了噢~~~')
         console.log('已经是第一首了', this.index)
         return
       }
@@ -197,6 +196,8 @@ export default {
     nextSong() {
       this.index++
       if (this.index >= this.songLists.length) {
+        this.index  = this.songLists.length-1
+        this.$message('没有下一首了噢~~~')
         console.log('全部播放结束', this.index)
         return
       }
@@ -256,6 +257,7 @@ export default {
       this.index++
       if (this.index >= this.songLists.length) {
         console.log('全部播放结束')
+        this.isPlaying = false
         return
       }
       this.getUrl(this.songLists[this.index].id)
@@ -401,21 +403,28 @@ export default {
       this.$nextTick(() => {
         this.$refs.songListTable.setCurrentRow(this.songLists[this.index])
       })
+    },
+    songLists(){
+      if (this.songLists.length==1) {
+        this.getUrl(this.songLists[this.index].id)
+        this.getSongWords(this.songLists[this.index].id)
+        this.hasSong = true
+        this.isPlaying = true
+        setTimeout(() => {
+          this.playMusic()
+          this.voice = this.$refs.audio.volume * 100
+        }, 500)
+        this.setInfo(this.songLists, this.index)
+      }else {
+        console.log('下一首')
+        this.nextSong()
+      }
     }
   },
   mounted() {
-    this.$bus.$on('songLists', async (val) => {
+    this.$bus.$on('songLists', (val) => {
       // console.log('songLists==>',JSON.parse(JSON.stringify(val)))
       this.songLists = JSON.parse(JSON.stringify(val))
-      await this.getUrl(this.songLists[this.index].id)
-      this.getSongWords(this.songLists[this.index].id)
-      this.hasSong = true
-      this.isPlaying = true
-      setTimeout(() => {
-        this.playMusic()
-        this.voice = this.$refs.audio.volume * 100
-      }, 500)
-      this.setInfo(this.songLists, this.index)
     })
   }
 }
@@ -425,11 +434,9 @@ export default {
 .box_up {
   transform: translateY(0);
 }
-
 .box_down {
   transform: translateY(-90px);
 }
-
 .main {
   position: fixed;
   bottom: 0;
@@ -440,7 +447,6 @@ export default {
   height: 90px;
   padding-top: 10px;
   overflow: hidden;
-
   .lyric {
     position: fixed;
     bottom: 100px;
@@ -450,11 +456,9 @@ export default {
     z-index: 100;
     background: #f8f8f8;
   }
-
   i {
     cursor: pointer;
   }
-
   .left_box {
     transition: .5s;
     width: 100%;
@@ -463,10 +467,8 @@ export default {
     .main_left {
       display: flex;
       margin-left: 10px;
-
       .hover_box {
         position: relative;
-
         img {
           width: 70px;
           height: 70px;
@@ -474,7 +476,6 @@ export default {
           margin-right: 10px;
           border: 1px solid #9f9f9f;
         }
-
         .hover_over {
           position: absolute;
           top: 1px;
@@ -486,29 +487,24 @@ export default {
           height: 70px;
           opacity: 0;
           border-radius: 10px;
-
           i {
             font-size: 24px;
           }
         }
-
         .hover_over:hover {
           opacity: .5;
           background: #fff;
           cursor: pointer;
         }
       }
-
       .info {
         display: flex;
         flex-direction: column;
         justify-content: center;
-
         .singer {
           width: 300px;
           line-height: 20px;
           display: flex;
-
           p {
             font-size: 16px;
             font-weight: bold;
@@ -519,18 +515,15 @@ export default {
             white-space: nowrap; /*设置为单行*/
           }
         }
-
         & > p:nth-child(2) {
           font-size: 12px;
         }
       }
     }
-
     .main_left2 {
       display: flex;
       margin-left: 10px;
       margin-bottom: 30px;
-
       .back {
         display: flex;
         justify-content: center;
@@ -540,7 +533,6 @@ export default {
         border-radius: 10px;
         margin-right: 10px;
         //border: 1px solid #000;
-
         i {
           font-size: 24px;
           transform: rotate(180deg);
@@ -548,36 +540,29 @@ export default {
       }
     }
   }
-
   //?播放器
   .music_player {
     margin: 0 auto;
-
     .player_top {
       display: flex;
       justify-content: center;
       justify-items: center;
-
       .iconfont {
         font-size: 20px;
         margin: 5px 30px 0;
       }
-
       .stop {
         font-size: 35px;
       }
     }
-
     .player_bottom {
       display: flex;
       justify-content: center;
       margin-top: 25px;
       line-height: 3px;
-
       span {
         user-select: none;
       }
-
       .line {
         cursor: pointer;
         width: 700px;
@@ -585,12 +570,10 @@ export default {
         background: #9f9f9f;
         margin: 0 15px;
         display: flex;
-
         .last {
           height: 3px;
           background: #ec4141;
         }
-
         .bot {
           width: 10px;
           height: 10px;
@@ -600,27 +583,23 @@ export default {
           margin-left: -10px;
         }
       }
-
       span {
         color: #9f9f9f;
         font-size: 13px;
       }
     }
   }
-
   .cent {
     width: 100vw;
     user-select: none;
     opacity: .5;
   }
-
   //?其他
   .main_right {
     display: flex;
     justify-content: space-around;
     justify-items: center;
     margin-top: 20px;
-
     .line_voice {
       cursor: pointer;
       width: 100px;
@@ -628,22 +607,18 @@ export default {
       background: #9f9f9f;
       margin: 0 15px;
       display: flex;
-
       .last_voice {
         height: 3px;
         width: 100px;
         background: #ec4141;
       }
     }
-
     .song_list {
       padding: 25px;
     }
-
     .iconfont {
       font-size: 20px;
     }
-
     .level {
       font-size: 12px;
       color: #ed5050;
