@@ -3,10 +3,10 @@
     <Top class="top"></Top>
     <div class="nav">
       <el-row>
-        <el-col :span="6" :lg="6">
+        <el-col :span="5" :lg="4">
           <NavMenu class="menu" @routerRefresh="routerRefresh"></NavMenu>
         </el-col>
-        <el-col :span="18">
+        <el-col :span="19" :lg="20">
           <div class="context">
             <router-view v-if="routerAlive"></router-view>
           </div>
@@ -21,7 +21,6 @@
 import Top from "@/components/pub/Top";
 import NavMenu from "@/components/pub/NavMenu";
 import MusicPlayer from "@/components/pub/MusicPlayer";
-
 export default {
   name: 'App',
   data(){
@@ -51,26 +50,21 @@ export default {
   margin: 0;
   padding: 0;
 }
-
 a {
   text-decoration: none;
   color: #000;
 }
-
 ul{
   list-style: none;
 }
-
 input {
   background: none;
   outline: none;
   border: none;
 }
-
 input:focus {
   border: none;
 }
-
 .el-loading-spinner .circular{
   width: 42px;
   height: 42px;
@@ -86,7 +80,9 @@ input:focus {
   top: 50%;
   left: 50%;
 }
-
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  min-height: 400px;
+}
 ::-webkit-scrollbar {/*滚动条整体样式*/
   width: 6px;     /*高宽分别对应横竖滚动条的尺寸*/
   height: 1px;
@@ -106,7 +102,6 @@ input:focus {
 #app {
   min-width: 900px;
   width: 100%;
-
   .nav {
     min-width: 900px;
     width: 100%;
@@ -118,19 +113,16 @@ input:focus {
     .context {
       //width: 100vw;
       height: calc(100vh - 160px);
-      overflow-y: scroll;
+      //overflow-y: scroll;
     }
   }
-
   .top {
     z-index: 98;
   }
-
   .down {
     z-index: 98;
     min-width: 800px;
   }
-
 }
 .el-popover{
   height: 100px;
