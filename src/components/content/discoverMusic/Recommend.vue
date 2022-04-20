@@ -1,31 +1,46 @@
 <template>
-  <div>
+  <div class="main">
     <el-carousel :interval="4000" type="card" height="280px" style="width: 100%;">
         <el-carousel-item v-for="item in imgList" :key="item" style="border-radius: 5px; margin-top:5px" >
             <img style="width:100%;height:100%" :src="item" alt="">
         </el-carousel-item>
     </el-carousel>
 
-    <ul class="recommenu">推荐歌单></ul>
+    <ul class="title">推荐歌单></ul>
 
-    <div class="demo-image">
-  <div class="block" v-for="(item,index) in comName" :key="index">
-    <el-image class="hotCom"
-      :src= "comPic[index]"
-      fit="fill"></el-image><br>
-    <span class="comCount">
-      <i class="iconfont icon-zanting" style="font-size:15px;"></i>
-      {{getNum[index]}}
-    </span>
-    <span class="demonstration">{{item}}</span><br>
+    <el-row>
+      <el-col :span="6" :lg="6" :xl="4" v-for="(item,index) in comName" :key="index">
+        <div class="block">
+        <el-image class="hotCom"
+          :src= "comPic[index]"
+          fit="fill"></el-image><br>
+        <span class="comCount">
+          <i class="iconfont icon-zanting" style="font-size:15px;"></i>
+          {{getNum[index]}}
+        </span>
+        <span class="demonstration">{{item}}</span><br>
+        </div>
+      </el-col>
+    </el-row>
 
-      </div>
-    </div>
+    <ul class="title">推荐MV></ul>
 
-    <ul class="recommenu">推荐MV></ul>
-
-    <div class="demo-image__placeholder" v-for="(item,index) in mvName" :key="index">
+    <el-row>
+      <el-col :span="6" v-for="(item,index) in mvName" :key="index">
       <div class="mv">
+
+        <transition               
+            enter-active-class="animate__backInDown"
+            leave-active-class="animate__backInUp">
+
+            <div class="mvyinying">
+              最新热门MV推荐
+            </div>
+
+        </transition>
+
+
+
         <el-image :src="mvPic[index]" class="mvPic"></el-image>
         <span class="mvCount">
           <i class="iconfont icon-zanting" style="font-size:15px;"></i>
@@ -34,7 +49,8 @@
         <span class="demonstration" style="width:260px">{{item}}</span><br>
         <span style="font-size:12px;color:grey">{{mvSinger[index]}}</span>
       </div>
-    </div>
+      </el-col>
+    </el-row>
 
   </div>
 </template>
@@ -111,10 +127,14 @@
 </script>
 
 <style>
-.el-carousel__indicator--horizontal.is-active .el-carousel__button{
-  background: var(--active-color) !important;
-}
-  .recommenu{
+  .main{
+      min-width: 1330px;
+  }
+
+  .el-carousel__indicator--horizontal.is-active .el-carousel__button{
+    background: var(--active-color) !important;
+  }
+  .title{
     font-size: 20px;
     font-weight: bold;
     padding: 20px;
@@ -164,8 +184,8 @@
 
   .comCount{
     position: absolute;
-    right: 30px;
-    top: 0;
+    right: 35px;
+    top: 5px;
     color: white;
     font-size: 15px;
   }
@@ -185,10 +205,39 @@
     height: 260px;
   }
 
+  .mv:hover .mvyinying{
+    display: inherit;
+    /* color: red; */
+  }
+
+    .mv:hover .mvCount{
+    display: none;
+    /* color: red; */
+  }
+
+  .mvyinying{
+    display: none;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    /* background: red; */
+    width: 310px;
+    height: 30px;
+    border-top-left-radius:10px;
+    border-top-right-radius:10px;
+    /* border-radius: 10px; */
+    z-index: 1;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    background-color: rgb(101, 101, 101,0.4);
+    /* opacity: 0.5; */
+  }
+
   .mvCount{
     position: absolute;
-    right: 10px;
-    top: 0;
+    right: 15px;
+    top: 5px;
     color: white;
     font-size: 15px;
   }
@@ -198,7 +247,7 @@
     height: 180px;
     border-radius: 10px;
   }
-  
+
   /* 设置轮播图的指示器为小圆点 */
   .el-carousel__indicator--horizontal .el-carousel__button {
       width: 10px;
