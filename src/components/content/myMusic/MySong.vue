@@ -99,6 +99,7 @@
 <script>
 import moment from "moment";
 import {Loading} from 'element-ui';
+
 export default {
   name: "MySong",
   data() {
@@ -117,6 +118,7 @@ export default {
       currentPage: 0, //? 当前页
       pageSize: 20,
       totalPage: 0, //? 总页数
+      isLoading: false, //! 数据节流处理
       songLists: [],//? 用来保存需要播放的可取
       songInfo: {},
       fullscreenLoading: false,
@@ -137,14 +139,14 @@ export default {
       //?歌曲详情
       // console.log(row);
       if (row.success) {
-        if(JSON.stringify(this.songLists).indexOf(JSON.stringify({
+        if (JSON.stringify(this.songLists).indexOf(JSON.stringify({
           name: row.name,
           singer: row.ar[0].name,
           id: row.id,
           al: row.al,
           album: row.al.name,
           time: row.dt
-        }))==-1){
+        })) == -1) {
           this.songLists.push({
             name: row.name,
             singer: row.ar[0].name,
@@ -154,7 +156,7 @@ export default {
             time: row.dt
           })
           this.sendSongLists()
-        }else {
+        } else {
           this.$message({message: '已经在播放列表了喔~', type: 'warning'})
         }
       } else {
@@ -207,15 +209,24 @@ export default {
       }
     },
     //?获取歌单全部歌曲
-    getAllPlaylist(offset) {
+    getAllPlaylist() {
+      this.isLoading = true
+      this.$notify.success({
+        title: 'Info',
+        message: '正在努力请求数据',
+        showClose: false,
+        duration: 0
+      });
       this.axios.get(`/playlist/track/all`, {
         params: {
           id: this.$route.params.id,
           limit: this.pageSize,
-          offset,
+          offset: this.currentPage,
           cookie: localStorage.getItem('MUSIC_U')
         }
       }).then(response => {
+        this.$notify.closeAll()
+        this.isLoading = false
         // console.log(response.data.songs);
         let newArr = [...this.songData, ...response.data.songs]
         let hash = {}; //去重
@@ -239,6 +250,8 @@ export default {
           })
         }
       }).catch(err => {
+        this.$notify.closeAll()
+        this.isLoading = false
         console.log(err);
       })
     },
@@ -308,29 +321,22 @@ export default {
           message: '已取消'
         });
       });
-    }
+    },
   },
   mounted() {
     console.log(this.$route.params.id);
     this.getDetails()
-    console.log('现在是第', this.currentPage + 1)
-    this.getAllPlaylist(this.currentPage)
+    this.getAllPlaylist()
     let dom = this.$refs.context
     this.$nextTick(() => {
       dom.addEventListener('scroll', () => {
-        //? 表格一格高度为48 一页15行高度为720
-        let pageHeight = 48 * this.pageSize
-        /**  scrollHeight 是一个元素能够展示其所有内容所需要的最小高度 总高度
-         *   clientHeight 是一个元素的 content + padding 的高度
-         *   scrollTop 元素的垂直滚动条位置 272开始为表格部分 进度条移动高度
-         *   0 21 41
-         * */
-        if (dom.scrollTop >= 270 + 200) { // 进入表格区域
-          if (dom.scrollTop - 270 - 200 >= pageHeight * this.currentPage) {
-            this.currentPage++
-            console.log('换页啦,现在是第', this.currentPage + 1)
-            this.getAllPlaylist(this.currentPage)
-          }
+        // 发请求中不执行
+        if (this.isLoading) return
+        if (dom.clientHeight + dom.scrollTop >= dom.scrollHeight - 250) {
+          // 超过总页数不在发请求
+          if(Math.ceil(this.trackCount/this.pageSize) < this.currentPage) return;
+          this.currentPage++
+          this.getAllPlaylist()
         }
       })
     })
@@ -339,33 +345,41 @@ export default {
 </script>
 
 <style scoped lang="less">
-.is-active{
+.is-active {
   color: var(--active-color) !important;
   border-bottom: 2px solid var(--active-color) !important;
 }
+
 .song_container {
   padding: 20px;
   width: 100%;
   height: calc(100vh - 180px);
   overflow-y: scroll;
+
   .top {
     display: flex;
+
     .top_left {
       margin-right: 15px;
+
       img {
         width: 190px;
         height: 190px;
         border-radius: 10px;
       }
     }
+
     .top_right {
       display: flex;
       flex-direction: column;
+
       .right_top {
         margin-bottom: 10px;
+
         .up {
           display: flex;
           margin-bottom: 10px;
+
           span {
             width: 40px;
             height: 20px;
@@ -378,26 +392,31 @@ export default {
             margin-top: 6px;
           }
         }
+
         .down {
           display: flex;
           height: 30px;
           line-height: 25px;
+
           img {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             margin-right: 10px;
           }
+
           .name {
             color: #767db6;
             margin-right: 10px;
           }
+
           .time {
             font-size: 13px;
           }
         }
       }
     }
+
     .right_mid {
       .do_it {
         border-radius: 20px;
@@ -405,19 +424,24 @@ export default {
         border: 1px solid var(--active-color);
       }
     }
+
     .right_down {
       display: flex;
       margin-top: 10px;
+
       p {
         font-size: 13px;
       }
+
       & > p:nth-child(1) {
         margin-right: 10px;
       }
     }
   }
+
   .content {
     width: 100%;
+
     .like {
       color: var(--active-color);
     }
