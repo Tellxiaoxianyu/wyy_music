@@ -19,9 +19,16 @@
               enter-active-class="animate__animated animate__bounceIn"
               leave-active-class="animate__animated animate__fadeOutLeft">
             <div class="tx_box" v-if="isLogin" :key="0">
-              <img :src="txImg" alt="">
+              <img :src="txImg" alt="" @click="dologout=!dologout">
+              <div class="logout" v-if="dologout">
+                <transition               
+                enter-active-class="animate__animated animate__bounceIn"
+                leave-active-class="animate__animated animate__bounceOut">
+                  <sapn @click="Logout" style="margin-right:0px">退出登录</sapn>
+                </transition>
+              </div>
+
               <span>{{ username }}</span>
-              <span @click="Logout">退出登录</span>
             </div>
             <div class="tx_box" v-else @click="primgLogin" :key="1">
               <span>点击登录</span>
@@ -110,7 +117,8 @@ export default {
       colors: ['#fff', '#ff5c8a', '#ff7a9e', '#717ff9', '#4791eb', '#39afea',
         '#2bb669', '#6acc19', '#e2ab12', '#ff8f57', '#fd726d', '#fd544e'
       ],
-      showColorChange:false
+      showColorChange:false,
+      dologout:false,
     }
   },
   methods: {
@@ -305,6 +313,7 @@ export default {
           this.setUid(this.uid)
           this.getAccount()
           this.$router.push('/discoverMusic/recommend')
+          this.dologout=!this.dologout
         }
       }).catch(err => {
         console.log(err)
@@ -465,4 +474,18 @@ export default {
     }
   }
 }
+  .logout{
+      position: absolute;
+      right: 45px;
+      top: 50px;
+      padding: 20px;
+      width: 75px;
+      height: 3px;
+      border-radius: 20px;
+      background: #fff;
+      border: 1px solid #ccc;
+      text-align: center;
+      line-height:3px;
+  }
+
 </style>
