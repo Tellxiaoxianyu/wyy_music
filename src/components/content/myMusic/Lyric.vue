@@ -50,7 +50,7 @@ export default {
   data() {
     return {
       currentTime: 0,
-      pt:90
+      pt:90, // 无歌词下移
     }
   },
   computed: {
@@ -72,7 +72,7 @@ export default {
           if (key>=5){
             this.pt = 0
             this.$nextTick(()=>{
-              this.$refs.lyric.scrollTop = 30 * (key - 5)
+              this.$refs.lyric.scrollTop = 33 * (key - 5)
             })
           }
         }
@@ -158,7 +158,8 @@ export default {
         position: absolute;
         width: 100%;
         height: 20px;
-        background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(232, 233, 232, .7), rgba(255, 255, 255, 0));
+        background-image: linear-gradient(to top,transparent, red);
+        z-index: 99;
       }
       .coverTop {
         top: 0;
