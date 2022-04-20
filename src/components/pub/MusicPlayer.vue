@@ -7,7 +7,7 @@
     <transition
         enter-active-class="animate__animated animate__slideInLeft"
         leave-active-class="animate__animated animate__slideOutRight">
-      <Lyric class="lyric" v-show="showLyric"
+      <Lyric class="lyric" v-if="showLyric"
              :info="toLyricInfo"
              :currentLyric="showLyric?lyric:[]"
              :time="currentTime"
