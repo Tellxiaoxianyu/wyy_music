@@ -9,17 +9,21 @@
     <ul class="title">推荐歌单></ul>
 
     <el-row>
-      <el-col :span="6" :lg="6" :xl="4" v-for="(item,index) in comName" :key="index">
+      <el-col :span="6" :lg="6" :xl="4" v-for="(item,index) in comSong" :key="index">
+
+        <router-link :to="`/my/mySong/${item.id}`" @click.native="routerR" :title="item.name">
         <div class="block">
         <el-image class="hotCom"
-          :src= "comPic[index]"
+          :src= "comSong[index].picUrl"
           fit="fill"></el-image><br>
         <span class="comCount">
           <i class="iconfont icon-zanting" style="font-size:15px;"></i>
           {{getNum[index]}}
         </span>
-        <span class="demonstration">{{item}}</span><br>
+        <span class="demonstration">{{item.name}}</span><br>
         </div>
+        </router-link>
+
       </el-col>
     </el-row>
 
@@ -28,19 +32,9 @@
     <el-row>
       <el-col :span="6" v-for="(item,index) in mvName" :key="index">
       <div class="mv">
-
-        <transition               
-            enter-active-class="animate__backInDown"
-            leave-active-class="animate__backInUp">
-
-            <div class="mvyinying">
+            <div class="mvyinying animate__animated animate__slideInDown animate__faster">
               最新热门MV推荐
             </div>
-
-        </transition>
-
-
-
         <el-image :src="mvPic[index]" class="mvPic"></el-image>
         <span class="mvCount">
           <i class="iconfont icon-zanting" style="font-size:15px;"></i>
@@ -61,16 +55,19 @@
         data(){
           return {
             imgList: [],
-            comName:[],
-            comPic:[],
             playCount:[],
-            src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+            comSong:[],
             mvName:[],
             mvPic:[],
             mvSinger:[],
             mvCount:[],
           }          
         },
+        methods: {
+          routerR() {
+            this.$emit('routerRefresh')
+          },
+        },        
         computed:{
           //将播放量超过万/亿的数字加上万/亿的单位
           getNum(){
@@ -103,16 +100,16 @@
 
           // 获取每日推荐歌单
           this.axios.get(`/personalized?limit=12`).then(response => {
+            // console.log("123",response.data.result);
             this.Lists = response.data.result
             this.Lists.forEach(item => {
-              this.comName.push(item.name)
-              this.comPic.push(item.picUrl)
+              this.comSong.push(item)
               this.playCount.push(item.playCount)
             })
           })
 
+          // 获取每日推荐MV
           this.axios.get(`/personalized/mv`).then(response => {
-            console.log("MV",response);
             this.Lists = response.data.result
             this.Lists.forEach(item => {
               this.mvName.push(item.name)
@@ -120,7 +117,6 @@
               this.mvCount.push(item.playCount)
               this.mvSinger.push(item.artistName)
             })
-            console.log(this.mvPic);
           })
         }
     }
@@ -203,6 +199,7 @@
     float:left;
     width: 310px;
     height: 260px;
+    overflow:hidden
   }
 
   .mv:hover .mvyinying{
