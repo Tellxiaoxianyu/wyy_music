@@ -1,4 +1,7 @@
 const mutations =  {
+    setRouteId(state, payload){
+        state.routeId = payload
+    },
     getUid(state, payload) {
         state.uid = payload.uid
     },

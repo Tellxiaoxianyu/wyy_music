@@ -92,29 +92,6 @@
           </el-menu-item>
         </el-submenu>
       </template>
-
-<!--            <p v-if="uid!=''">创建的歌单</p>-->
-<!--            <transition-group-->
-<!--                enter-active-class="animate__animated animate__fadeInLeft"-->
-<!--                leave-active-class="animate__animated animate__fadeOutLeft">-->
-<!--              <el-menu-item v-for="(list,index) in createPlayList" :key="'id_'+index">-->
-<!--                <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">-->
-<!--                  <i :class="['iconfont',index==0?'icon-xihuan1':'icon-gedan']"></i>-->
-<!--                  {{ list.name }}-->
-<!--                </router-link>-->
-<!--              </el-menu-item>-->
-<!--            </transition-group>-->
-<!--            <p v-if="uid!=''">收藏的歌单</p>-->
-<!--            <transition-group-->
-<!--                enter-active-class="animate__animated animate__fadeInLeft"-->
-<!--                leave-active-class="animate__animated animate__fadeOutLeft">-->
-<!--              <el-menu-item v-for="(list,index) in collectPlayList" :key="'id2_'+index">-->
-<!--                <router-link :to="`/my/mySong/${list.id}`" @click.native="routerR" :title="list.name">-->
-<!--                  <i class="iconfont icon-gedan"></i>-->
-<!--                  {{ list.name }}-->
-<!--                </router-link>-->
-<!--              </el-menu-item>-->
-<!--            </transition-group>-->
     </el-menu>
   </div>
 </template>

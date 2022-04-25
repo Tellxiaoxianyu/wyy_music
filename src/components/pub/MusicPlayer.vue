@@ -80,7 +80,7 @@
             </el-slider>
             <i class="iconfont icon-24gl-volumeZero" slot="reference"></i>
           </el-popover>
-          <i class="iconfont icon-haoyou"></i>
+<!--          <i class="iconfont icon-haoyou"></i>-->
           <i class="iconfont icon-qukuchaxun" @click="table = true"></i>
           <el-drawer
               title="当前播放"
@@ -308,7 +308,7 @@ export default {
           id
         }
       }).then(response => {
-        console.log(response);
+        // console.log(response);
         this.url = response.data.data[0].url
       }).catch(err => {
         console.log(err)
@@ -338,7 +338,7 @@ export default {
         this.lyric = []
         //? 处理歌词
         this.formatLyric(response.data.lrc.lyric)
-        console.log(this.lyric);
+        // console.log(this.lyric);
       }).catch(err => {
         console.log(err);
       })
@@ -362,7 +362,7 @@ export default {
       }
       this.lyric.sort(this.sortRule); //由于不同时间的相同歌词我们给排到一起了，所以这里要以时间顺序重新排列一下
       this.$store.commit("setLyric", this.lyric);
-      console.log(this.$store.state);
+      // console.log(this.$store.state);
     },
     sortRule(a, b) { //设置一下排序规则
       return a.time - b.time;
@@ -405,7 +405,6 @@ export default {
       })
     },
     songLists(){
-      if (this.songLists.length==1) {
         this.getUrl(this.songLists[this.index].id)
         this.getSongWords(this.songLists[this.index].id)
         this.hasSong = true
@@ -415,16 +414,26 @@ export default {
           this.voice = this.$refs.audio.volume * 100
         }, 500)
         this.setInfo(this.songLists, this.index)
-      }else {
-        console.log('下一首')
-        this.nextSong()
-      }
+    },
+    index(){
+      this.getUrl(this.songLists[this.index].id)
+      this.getSongWords(this.songLists[this.index].id)
+      this.hasSong = true
+      this.isPlaying = true
+      setTimeout(() => {
+        this.playMusic()
+        this.voice = this.$refs.audio.volume * 100
+      }, 500)
+      this.setInfo(this.songLists, this.index)
     }
   },
   mounted() {
     this.$bus.$on('songLists', (val) => {
       // console.log('songLists==>',JSON.parse(JSON.stringify(val)))
       this.songLists = JSON.parse(JSON.stringify(val))
+    })
+    this.$bus.$on('songIndex',val=>{
+     this.index = val*1
     })
   }
 }
