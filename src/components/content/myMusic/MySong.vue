@@ -120,8 +120,10 @@ export default {
       totalPage: 0, //? 总页数
       isLoading: false, //! 数据节流处理
       songLists: [],//? 用来保存需要播放的可取
+      songIndex: 0,
       songInfo: {},
       fullscreenLoading: false,
+      isChange: false,//判断有无切换歌单
     }
   },
   methods: {
@@ -135,29 +137,37 @@ export default {
     sendSongLists() {
       this.$bus.$emit("songLists", this.songLists)
     },
+    // 记录当前播放歌曲的index
+    sendSongIndex() {
+      this.$bus.$emit("songIndex", this.songIndex)
+    },
+    songListsPush(data) {
+      this.songLists.push({
+        name: data.name,
+        singer: data.ar[0].name,
+        id: data.id,
+        al: data.al,
+        album: data.al.name,
+        time: data.dt
+      })
+    },
     async rowDblclick(row) {
-      //?歌曲详情
-      // console.log(row);
       if (row.success) {
-        if (JSON.stringify(this.songLists).indexOf(JSON.stringify({
-          name: row.name,
-          singer: row.ar[0].name,
-          id: row.id,
-          al: row.al,
-          album: row.al.name,
-          time: row.dt
-        })) == -1) {
-          this.songLists.push({
-            name: row.name,
-            singer: row.ar[0].name,
-            id: row.id,
-            al: row.al,
-            album: row.al.name,
-            time: row.dt
-          })
-          this.sendSongLists()
+        if (this.songLists.length != 0) {
+          try {
+            this.songLists.forEach(item => {
+              if (item.id == row.id) {
+                throw new Error(this.songLists.indexOf(item))
+              }
+            })
+          } catch (e) {
+            console.log(e.message)
+            this.songIndex = e.message * 1
+            this.sendSongIndex()
+            return
+          }
         } else {
-          this.$message({message: '已经在播放列表了喔~', type: 'warning'})
+          this.playAll()
         }
       } else {
         this.$alert('因版权方要求,该资源暂时无法播放,我们正在争取歌曲回归', '当前歌曲暂无音源', {
@@ -278,6 +288,16 @@ export default {
       })
     },
     playAll() {
+      if (this.songLists.length != 0) {
+        for (let item1 of this.songDataAll) {
+          for (const item2 of this.songLists) {
+            if (item1.id == item2.id) {
+              this.$message('现在放的已经是这个歌单啦~呆逼')
+              return
+            }
+          }
+        }
+      }
       this.$confirm('此操作将会覆盖目前的播放列表', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -290,6 +310,7 @@ export default {
         });
         //覆盖全部
         this.songLists = []
+        this.songIndex = 0
         for (let item of this.songDataAll) {
           item.durationTime = item.dt
           item.dt = moment(item.dt).format('mm:ss')
@@ -299,19 +320,14 @@ export default {
         }
         for (let s of this.songDataAll) {
           if (s.success) {
-            this.songLists.push({
-              name: s.name,
-              singer: s.ar[0].name,
-              id: s.id,
-              al: s.al,
-              album: s.al.name,
-              time: s.dt
-            })
+            this.songListsPush(s)
           } else {
             continue
           }
         }
         this.sendSongLists()
+        this.sendSongIndex()
+        this.isChange = false
         this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
           loadingInstance.close();
         });
@@ -325,6 +341,12 @@ export default {
   },
   mounted() {
     console.log(this.$route.params.id);
+    if (this.$store.state.routeId != this.$route.params.id) {
+      this.isChange = true
+      this.$store.commit("setRouteId", this.$route.params.id)
+    } else {
+      this.isChange = false
+    }
     this.getDetails()
     this.getAllPlaylist()
     let dom = this.$refs.context
@@ -334,7 +356,7 @@ export default {
         if (this.isLoading) return
         if (dom.clientHeight + dom.scrollTop >= dom.scrollHeight - 250) {
           // 超过总页数不在发请求
-          if(Math.ceil(this.trackCount/this.pageSize) < this.currentPage) return;
+          if (Math.ceil(this.trackCount / this.pageSize) < this.currentPage) return;
           this.currentPage++
           this.getAllPlaylist()
         }
