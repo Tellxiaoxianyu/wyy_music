@@ -61,7 +61,7 @@ export default {
   watch: {
     info() {
       this.pt = 90
-      console.log(this.info);
+      // console.log(this.info);
     },
     currentLyric() {
     },
